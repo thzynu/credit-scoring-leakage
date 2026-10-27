@@ -1,0 +1,12 @@
+# Excerpted from `pip freeze` on the original experiment machine (Windows). Only the packages the code
+# actually uses and their direct dependencies are kept. The full `pip freeze` also lists torch, xgboost, lightgbm,
+# catboost, shap... but code/ does NOT use them.
+# Python version: run `python --version` and fill it in here: Python ____
+scikit-learn==1.8.0
+imbalanced-learn==0.14.1
+sklearn-compat==0.1.5
+pandas==3.0.2
+numpy==2.4.3
+scipy==1.17.1
+joblib==1.5.3
+threadpoolctl==3.6.0
