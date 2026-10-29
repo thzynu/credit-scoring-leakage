@@ -13,17 +13,19 @@ repository under CC BY 4.0. **`gmsc.csv` is not included** and must be downloade
 
 ## German, Australian, Taiwan (UCI)
 
-Downloaded from the UCI Machine Learning Repository. The target column was saved as `target`.
-German uses labels 1/2 (2 = bad); the code sets `positive=2` for it.
+Downloaded from the UCI Machine Learning Repository (CC BY 4.0, checked on the dataset pages).
+The target column was saved as `target`. German uses labels 1/2 (2 = bad); the code sets
+`positive=2` for it.
 
-- German: UCI dataset id 144, https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data
-- Australian: UCI dataset id 143, https://archive.ics.uci.edu/dataset/143/statlog+australian+credit+approval
-  Quinlan, R. Statlog (Australian Credit Approval). UCI Machine Learning Repository.
-  https://doi.org/10.24432/C59012 (CC BY 4.0)
-- Taiwan: UCI dataset id 350, https://archive.ics.uci.edu/dataset/350/default+of+credit+card+clients
-
-TODO before submission: copy the exact citation (authors, year, DOI) for German and Taiwan from the
-"Cite" button on their UCI pages, and paste it here.
+- German (UCI id 144): Hofmann, H. (1994). Statlog (German Credit Data) [Dataset]. UCI Machine
+  Learning Repository. https://doi.org/10.24432/C5NC77
+- Australian (UCI id 143): Quinlan, R. Statlog (Australian Credit Approval). UCI Machine Learning
+  Repository. https://doi.org/10.24432/C59012
+- Taiwan (UCI id 350): Yeh, I. (2009). Default of Credit Card Clients [Dataset]. UCI Machine
+  Learning Repository. https://doi.org/10.24432/C55S3H
+  Introductory paper: Yeh, I.-C., & Lien, C.-H. (2009). The comparisons of data mining techniques
+  for the predictive accuracy of probability of default of credit card clients. Expert Systems with
+  Applications.
 
 ## Lending Club (sample)
 
@@ -34,11 +36,17 @@ Lending Club loan dataset for granting models (Version 0.1) [Dataset]. Universid
 Madrid. https://doi.org/10.5281/zenodo.11295916 (CC BY 4.0)
 
 - Original file: `LC_loans_granting_model_dataset.csv`, 167.5 MB, MD5 `b019384d6bc65bf2a3e839362e4ff502`
-  (as listed on Zenodo).
-- Sample in this repo: MD5 `cf57d101e3e9cbb0a6e5d0ec4ce92774`. The column `year` was derived from `issue_d`.
-  Columns `desc` and `title` were dropped.
-- TODO: state how the sample was drawn (random seed, whether stratified by year and default rate)
-  and confirm the MD5 of the original file you started from.
+  (as listed on Zenodo). The Zenodo description gives 1,347,681 records.
+- Sample in this repo: 100,001 rows, MD5 `cf57d101e3e9cbb0a6e5d0ec4ce92774`. The column `year` was
+  derived from `issue_d`. Columns `desc` and `title` were dropped.
+- Verification (run 2026-10-29 against the file downloaded from Zenodo, joined on `id`):
+  all 100,001 sample rows are found in the original file; `loan_amnt` and `Default` match in
+  100% of rows. The share of loans per issue year is identical to the original to four decimals
+  in all 12 years (2007-2018), which is consistent with a sample stratified by issue year.
+  The default rate is 0.2006 in the sample versus 0.1998 in the original, so the sample was
+  not forced to keep the default rate.
+- The sampling script and random seed were not recorded. The stratification by year is
+  inferred from the numbers above, not from a script.
 
 ## Give Me Some Credit (not redistributed)
 
