@@ -1,3 +1,4 @@
+# Python 3.13.12 
 aio-pika==9.6.2
 aiormq==6.9.4
 alembic==1.18.5
