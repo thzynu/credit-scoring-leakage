@@ -13,7 +13,7 @@ my advisor, not yet published code.
 | Re-run check | German, seed 1: `exp.py`, `exp_base.py`, `exp_bal.py`, `exp_diag.py`, `exp_sel.py` match `results/` digit for digit (difference 0). `exp_time.py`, `exp_cost.py`, `exp_boot.py`, `exp_q.py` were only smoke-tested (they run), numbers not compared |
 | `make_tables.py` | Rebuilds every summary table from the raw files in `results/` |
 | Full run from scratch | Not done. Takes many hours |
-| Data sources and licences | Documented in `DATA.md`. `gmsc.csv` is not included in the repository |
+| Data sources and licences | Documented in `DATA.md`. GMSC was excluded (Kaggle licence: Competition Use only) |
 | Literature check | Preliminary only. The main finding (balancing before the fold split inflates CV AUC) is already reported in the literature, including for credit scoring, so the contribution is limited to the decomposition below. A full review is still pending |
 
 Environment (see `requirements-lock.txt`, Python 3.13.12): scikit-learn 1.8.0, imbalanced-learn
@@ -25,7 +25,7 @@ evidence for every cell.
 
 ```
 code/             experiment scripts + make_tables.py
-data/             CSV files (see DATA.md; gmsc.csv must be downloaded by the reader)
+data/             CSV files (see DATA.md)
 results/          raw results of every run (each row = one model x one seed)
 results/tables/   summary tables produced by make_tables.py
 legacy/           old scripts and results that have been superseded, kept for comparison
@@ -49,16 +49,16 @@ anything. To check reproducibility, copy the folder elsewhere and delete `result
 
 | Script | Measures | Output |
 |---|---|---|
-| `exp.py` | The correct pipeline versus the leaky variants: imputation, whole-data preprocessing, SMOTE before splitting folds, and hold-out. `--data` = taiwan, german, australian, gmsc, lendingclub | `results/<data>_v2.csv` |
+| `exp.py` | The correct pipeline versus the leaky variants: imputation, whole-data preprocessing, SMOTE before splitting folds, and hold-out. `--data` = taiwan, german, australian, lendingclub | `results/<data>_v2.csv` |
 | `exp_base.py` | Hold-out without SMOTE (baseline) | `<data>_nosmote.csv` |
 | `exp_sel.py` | Leakage from feature selection (`SelectKBest`) before splitting folds, at ratio `--kfrac` | `<data>_sel.csv` |
 | `exp_bal.py` | Comparison of class balancers: SMOTE, RandomOverSampler, BorderlineSMOTE, ADASYN | `<data>_bal_<balancer>.csv` |
 | `exp_diag.py` | Splits the inflation into "true leakage" and "synthetic points ending up in the scoring set" | `diag_<data>_<balancer>.csv` |
+| `exp_samefold.py` | Repeats the decomposition with the correct and the leaky model scored on exactly the same folds and original points; `--match-syn` also matches the number of synthetic points | `samefold_*.csv`, `samematch_*.csv` |
 | `exp_time.py` | Lending Club: random split vs out-of-time split (train 2013 to 2015, test 2016) | `lendingclub_time.csv` |
 | `exp_cost.py` | Lending Club: decision cost with cost ratios 3, 5, 10; threshold chosen on the validation set | `lendingclub_cost.csv` |
 | `exp_boot.py` | Bootstrap confidence intervals of the 2016 AUC and of the paired AUC differences between models | printed to screen |
 | `exp_q.py`, `exp_base_q.py` | Variants using `QuantileTransformer` instead of `StandardScaler` (dataset names get the suffix `_q`) | `<data>_q_*.csv` |
-| `kiem_tra_logreg.py` | Compares plain logreg, `class_weight=balanced`, SMOTE, and quantile on GMSC (3 seeds) | printed to screen |
 | `make_tables.py` | Builds every summary table from the raw files | `results/tables/*.csv` |
 
 ## How to read the tables
@@ -69,6 +69,7 @@ anything. To check reproducibility, copy the folder elsewhere and delete `result
   to synthetic points being in the scoring set; `total = auc_all - cv_in` is the inflation a reader
   sees. `share_synth` is only meaningful when |total| is larger than about 0.01 (it is left empty
   otherwise).
+- `bang_phan_ra_samefold.csv`: same-folds decomposition. `real_match` (matched synthetic count) is the main estimate of true leakage; `rest = total - real_old` mixes two designs, so call it "the remainder", not a measured component.
 - `bang_can_bang.csv`: `tang = cv_before - cv_in`, by balancer.
 - `bang_thoi_gian.csv`, `bang_chi_phi.csv`: Lending Club.
 - `bao_phu_seed.csv`: number of seeds in each cell. **Look at this table before quoting any number.**
@@ -78,23 +79,24 @@ anything. To check reproducibility, copy the folder elsewhere and delete `result
 | Dataset | Seeds | What is covered |
 |---|---|---|
 | German, Australian | 30 | all 7 models in `_v2`, `_nosmote`, and `diag_*_smote`; 4 models for ROS, Borderline, ADASYN and feature selection |
-| Taiwan | 10 | all 7 models in `_v2` and `_nosmote`; 4 models for ROS, Borderline, feature selection; `diag_*_smote`: 4 models with 10 seeds, `hgb_full` and `rf_full` with 5; `diag_*_borderline`: `hgb_depth2`, `logreg` with 5 |
-| GMSC | 5 | 5 models in `_v2` and `_nosmote` (no `knn5`, `rf_full` at full size); `diag_*_smote`: `hgb_depth2`, `hgb_depth4`, `hgb_full`, `logreg` |
+| Taiwan | 10 | all 7 models in `_v2` and `_nosmote`; 4 models for ROS, Borderline, feature selection; `diag_*_smote`: `hgb_depth2`, `hgb_full`, `knn5`, `logreg`, `rf_depth5` with 10 seeds, `hgb_depth4` with 5, `rf_full` with 7; `diag_*_borderline`: `hgb_depth2`, `logreg` with 5 |
 | Lending Club | 3 to 5 | `diag_*_smote`: `hgb_depth2`, `hgb_depth4`, `hgb_full`, `knn5`, `logreg` (5 seeds); out-of-time: 7 models (5 seeds); cost: 3 models (3 seeds). No `_v2` hold-out run and no random-forest model in the decomposition |
 
 ## Known limitations (must be stated in the paper)
 
 1. **Uneven number of seeds** (table above). Quote the seed count next to every number.
 2. **The decomposition is incomplete.** ADASYN was run only for German and Australian; Borderline only
-   for German, Australian and Taiwan (Taiwan with 2 models); GMSC and Lending Club have SMOTE only
+   for German, Australian and Taiwan (Taiwan with 2 models); Lending Club has SMOTE only
    and fewer models.
 3. `german_bal_smote.csv` now has 30 seeds for 4 models. For all-model SMOTE results use `diag_*`
    or the `smote_tang` column in `tong_hop_chinh.csv`.
 4. Hyperparameters are left at their defaults, not tuned.
 5. `cv_in` and `auc_orig` use two different fold splits (arrays of different sizes), so part of the
    difference may come from fold composition. Averaging over many seeds reduces this but does not
-   eliminate it. A cleaner design would fix the folds of the correct pipeline and score the
-   leaky model on exactly the same original points.
+   eliminate it. `exp_samefold.py` (with `--match-syn`) repeats the decomposition on identical folds and a matched
+   number of synthetic points; it agrees with the original decomposition to within about 0.002
+   (`bang_phan_ra_samefold.csv`), so this is a robustness check rather than a flaw. It has only
+   3 seeds for Lending Club.
 6. The SEs in the tables only reflect the variation between splits on the same dataset. Do not use the
    very large z values as confidence in the conclusions.
 7. `exp_boot.py` uses a single seed and only resamples the test set, so it does not capture the variation
@@ -102,8 +104,8 @@ anything. To check reproducibility, copy the folder elsewhere and delete `result
 8. The mechanism explanations (the model "memorizing" the original points; Borderline flipping sign
    because synthetic points lie close to the decision boundary) are hypotheses, not directly tested.
 9. Data provenance: see `DATA.md`. The Lending Club sample is verified row by row against the Zenodo
-   file (by `id`), but the sampling script and seed were not recorded. `gmsc.csv` is not
-   redistributed; the full Kaggle terms have not been read.
+   file (by `id`), but the sampling script and seed were not recorded. GMSC was
+   excluded (Kaggle licence: Competition Use only).
 
 ## Glossary of Vietnamese names kept in code and result files
 
@@ -122,6 +124,5 @@ Column, file, and label names were left unchanged so the code still matches the 
 | `bang_thoi_gian` | time (out-of-time) table |
 | `bang_chi_phi` | cost table |
 | `bao_phu_seed` | seed coverage |
-| `kiem_tra_logreg` | logreg check |
 | `legacy/tong_hop_*`, `xem_du_lieu` | old summary scripts, "view data" |
 | `hang_that`, `hang_ro_ri` | true rank, leaky rank |

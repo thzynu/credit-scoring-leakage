@@ -1,7 +1,7 @@
 # Data sources and licences
 
-The code in `code/` expects five CSV files in `data/`. Four of them are redistributed in this
-repository under CC BY 4.0. **`gmsc.csv` is not included** and must be downloaded by the reader.
+The code in `code/` uses four CSV files in `data/`, all redistributed in this repository under
+CC BY 4.0. Give Me Some Credit (GMSC) was excluded from the study; see the last section.
 
 | File | Rows | Source | Licence | In repo? |
 |---|---|---|---|---|
@@ -9,7 +9,6 @@ repository under CC BY 4.0. **`gmsc.csv` is not included** and must be downloade
 | `australian.csv` | 690 | UCI, Statlog (Australian Credit Approval) | CC BY 4.0 | yes |
 | `taiwan.csv` | 30,000 | UCI, Default of Credit Card Clients | CC BY 4.0 | yes |
 | `lendingclub_100k.csv` | 100,001 | Zenodo, Lending Club loan dataset for granting models (sample) | CC BY 4.0 | yes |
-| `gmsc.csv` | 150,000 | Kaggle, Give Me Some Credit | competition terms (not read in full) | **no** |
 
 ## German, Australian, Taiwan (UCI)
 
@@ -48,21 +47,12 @@ Madrid. https://doi.org/10.5281/zenodo.11295916 (CC BY 4.0)
 - The sampling script and random seed were not recorded. The stratification by year is
   inferred from the numbers above, not from a script.
 
-## Give Me Some Credit (not redistributed)
+## Give Me Some Credit (excluded)
 
-Source: Kaggle competition "Give Me Some Credit" (Credit Fusion, 2011),
-https://www.kaggle.com/c/GiveMeSomeCredit
+Kaggle competition "Give Me Some Credit" (Credit Fusion, 2011), https://www.kaggle.com/c/GiveMeSomeCredit.
 
-Why it is not in this repo: the competition rules page states that privately sharing data outside
-teams is not permitted, and the full Data Access and Use terms were not read by the authors of this
-repository. To stay on the safe side the file is not redistributed. Its history was removed from
-git.
-
-To reproduce:
-1. Log in to Kaggle and accept the competition terms.
-2. Download `cs-training.csv` from the competition Data tab.
-3. Save it as `data/gmsc.csv`. The file used in the paper has 11 columns, starting with the
-   target `SeriousDlqin2yrs` and 150,000 rows. If your download has an extra unnamed index column
-   in front, drop it so the columns match.
-
-TODO: after reading the full terms, paste the "Data Access and Use" paragraph here with the date read.
+GMSC was explored early on but is excluded from the study and from this repository. Its Data Access
+and Use setting is "Competition Use only" (checked 29/10/2026), which allows the data to be used only
+to take part in the competition and on the Kaggle forums, not for publications. Result files that
+used it were removed from `results/`. They may still exist in earlier git history of this private
+repository, so rewrite the history before making the repository public.
