@@ -80,6 +80,26 @@ bad = (g["total"] < 0.01) | (g["real"] < 0) | (g["synth"] < 0)
 g.loc[bad, "share_synth"] = float("nan")   # leave blank when the split is meaningless
 save(g.round(4), "bang_phan_ra.csv")
 
+# ---------------------------------------------------------------- Table 2b
+# Same-scoring-set decomposition (exp_samefold.py). Folds are fixed on the original data, so
+# cv_in_same == cv_in exactly and the scoring set is identical for both pipelines:
+#   real_same = leak_same - cv_in_same : leakage through the TRAINING set only
+#   rest      = total - real_same      : inflation NOT explained by leakage into training
+#                                        (synthetic points in the scoring set; also any
+#                                        fold-composition effect of the old design)
+# total and real_old come from the old design (Table 2) and are shown for comparison.
+sf = read_all("samefold_*.csv")
+t2b = sf.groupby(["dataset", "balancer", "model"]).agg(
+    n=("seed", "nunique"), real_same=("real_same", "mean"), real_same_se=("real_same", se),
+    n_syn_in=("n_syn_in", "mean"), n_syn_leak=("n_syn_leak", "mean"))
+old = dg.groupby(["dataset", "balancer", "model"]).agg(
+    n_old=("seed", "nunique"), total=("total", "mean"), real_old=("real", "mean"))
+t2b = t2b.join(old)
+t2b["rest"] = t2b["total"] - t2b["real_same"]
+t2b["share_real_same"] = t2b["real_same"] / t2b["total"]
+t2b.loc[t2b["total"] < 0.01, "share_real_same"] = float("nan")   # meaningless when total is tiny
+save(t2b.round(4), "bang_phan_ra_samefold.csv")
+
 # ---------------------------------------------------------------- Table 3
 # Leakage when balancing classes before splitting folds, by balancer (SMOTE/ROS/Borderline)
 bl = read_all("*_bal_*.csv")
