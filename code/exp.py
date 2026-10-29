@@ -34,8 +34,10 @@ MODELS = {
     "hgb_depth4": lambda: HistGradientBoostingClassifier(max_depth=4, max_iter=100, random_state=42),
     "hgb_full": lambda: HistGradientBoostingClassifier(random_state=42),
     "knn5": lambda: KNeighborsClassifier(n_neighbors=5),
+    "knn25": lambda: KNeighborsClassifier(n_neighbors=25),
     "rf_depth5": lambda: RandomForestClassifier(n_estimators=100, max_depth=5, random_state=42),
     "rf_full": lambda: RandomForestClassifier(n_estimators=100, random_state=42),
+    "rf_leaf5": lambda: RandomForestClassifier(n_estimators=100, min_samples_leaf=5, random_state=42),
 }
 
 

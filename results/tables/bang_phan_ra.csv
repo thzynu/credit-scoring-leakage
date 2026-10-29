@@ -34,8 +34,15 @@ lendingclub,smote,hgb_depth4,5,0.2254,0.0058,0.0005,0.2196,0.9442,0.9744
 lendingclub,smote,hgb_full,5,0.2456,0.0074,0.0004,0.2382,0.9725,0.9698
 lendingclub,smote,knn5,5,0.2731,0.2145,0.0004,0.0586,0.8539,0.2145
 lendingclub,smote,logreg,5,0.0104,0.0015,0.0001,0.009,0.6703,0.8591
-taiwan,borderline,hgb_depth2,5,0.058,0.0047,0.0004,0.0533,0.8463,0.9185
-taiwan,borderline,logreg,5,-0.0375,0.002,0.0005,-0.0395,0.6724,
+lendingclub,smote,rf_depth5,5,0.0718,0.0038,0.0003,0.068,0.7345,0.9467
+taiwan,adasyn,hgb_depth2,10,0.0556,0.0051,0.0002,0.0505,0.839,0.9088
+taiwan,adasyn,knn5,10,0.1679,0.1585,0.0009,0.0094,0.849,0.0558
+taiwan,adasyn,logreg,10,-0.044,0.0011,0.0001,-0.0452,0.6633,
+taiwan,adasyn,rf_depth5,10,-0.0095,0.0048,0.0002,-0.0143,0.757,
+taiwan,borderline,hgb_depth2,10,0.0584,0.0049,0.0004,0.0535,0.8452,0.9154
+taiwan,borderline,knn5,10,0.1838,0.1317,0.0008,0.0521,0.884,0.2834
+taiwan,borderline,logreg,10,-0.0365,0.0018,0.0003,-0.0384,0.6734,
+taiwan,borderline,rf_depth5,10,0.0038,0.0044,0.0003,-0.0006,0.774,
 taiwan,smote,hgb_depth2,10,0.0727,0.0044,0.0004,0.0682,0.8671,0.9388
 taiwan,smote,hgb_depth4,10,0.1225,0.0114,0.0004,0.1111,0.9338,0.9069
 taiwan,smote,hgb_full,10,0.1529,0.0209,0.0006,0.132,0.972,0.8632
