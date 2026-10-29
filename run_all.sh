@@ -10,14 +10,10 @@ J=2
 # --- Correct pipeline vs leaks (exp.py) and the no-SMOTE baseline (exp_base.py)
 for d in german australian; do $P/exp.py --data $d --nseeds 30 --jobs $J; $P/exp_base.py --data $d --nseeds 30; done
 $P/exp.py --data taiwan --nseeds 10 --jobs $J;  $P/exp_base.py --data taiwan --nseeds 10
-# GMSC: knn5 and rf_full are very slow; the saved version has only 3 seeds for these two models
-$P/exp.py --data gmsc --models logreg hgb_depth2 hgb_depth4 hgb_full rf_depth5 --nseeds 5 --jobs $J
-$P/exp_base.py --data gmsc --models logreg hgb_depth2 hgb_depth4 hgb_full rf_depth5 --nseeds 5
 
 # --- Leakage from feature selection
 for d in german australian; do $P/exp_sel.py --data $d --nseeds 30 --jobs $J; done
 $P/exp_sel.py --data taiwan --nseeds 10 --jobs $J
-$P/exp_sel.py --data gmsc --models logreg hgb_depth2 rf_depth5 --nseeds 5 --jobs $J
 
 # --- Class balancers
 for b in ros borderline; do
@@ -35,7 +31,6 @@ $P/exp_diag.py --data taiwan --bal borderline --models logreg hgb_depth2 --nseed
 # --- QuantileTransformer variant
 for d in german_q australian_q; do $P/exp_q.py --data $d --models logreg knn5 --nseeds 30 --jobs $J; $P/exp_base_q.py --data $d --models logreg knn5 --nseeds 30; done
 $P/exp_q.py --data taiwan_q --models logreg knn5 --nseeds 10 --jobs $J; $P/exp_base_q.py --data taiwan_q --models logreg knn5 --nseeds 10
-$P/exp_q.py --data gmsc_q --models logreg --nseeds 5 --jobs $J; $P/exp_base_q.py --data gmsc_q --models logreg --nseeds 5
 
 # --- Lending Club: out-of-time split, decision cost, bootstrap
 $P/exp_time.py --nseeds 5 --jobs $J

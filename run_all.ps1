@@ -14,14 +14,10 @@ foreach ($d in "german", "australian") {
 }
 Run code\exp.py --data taiwan --nseeds 10 --jobs $J
 Run code\exp_base.py --data taiwan --nseeds 10
-# GMSC: knn5 and rf_full are very slow; the saved version has only 3 seeds for these two models
-Run code\exp.py --data gmsc --models logreg hgb_depth2 hgb_depth4 hgb_full rf_depth5 --nseeds 5 --jobs $J
-Run code\exp_base.py --data gmsc --models logreg hgb_depth2 hgb_depth4 hgb_full rf_depth5 --nseeds 5
 
 # --- Leakage from feature selection
 foreach ($d in "german", "australian") { Run code\exp_sel.py --data $d --nseeds 30 --jobs $J }
 Run code\exp_sel.py --data taiwan --nseeds 10 --jobs $J
-Run code\exp_sel.py --data gmsc --models logreg hgb_depth2 rf_depth5 --nseeds 5 --jobs $J
 
 # --- Class balancers
 foreach ($b in "ros", "borderline") {
@@ -43,8 +39,6 @@ foreach ($d in "german_q", "australian_q") {
 }
 Run code\exp_q.py --data taiwan_q --models logreg knn5 --nseeds 10 --jobs $J
 Run code\exp_base_q.py --data taiwan_q --models logreg knn5 --nseeds 10
-Run code\exp_q.py --data gmsc_q --models logreg --nseeds 5 --jobs $J
-Run code\exp_base_q.py --data gmsc_q --models logreg --nseeds 5
 
 # --- Lending Club: out-of-time split, decision cost, bootstrap
 Run code\exp_time.py --nseeds 5 --jobs $J

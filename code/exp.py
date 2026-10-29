@@ -24,7 +24,6 @@ DATASETS = {
     "taiwan": dict(path="taiwan.csv", target="target", positive=1, drop=[], min_freq=None),
     "german": dict(path="german.csv", target="target", positive=2, drop=[], min_freq=None),
     "australian": dict(path="australian.csv", target="target", positive=1, drop=[], min_freq=None),
-    "gmsc": dict(path="gmsc.csv", target="SeriousDlqin2yrs", positive=1, drop=[], min_freq=None),
     "lendingclub": dict(path="lendingclub_100k.csv", target="Default", positive=1,
                         drop=["id", "issue_d", "year", "zip_code"], min_freq=0.01),
 }
