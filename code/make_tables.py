@@ -94,10 +94,18 @@ t2b = sf.groupby(["dataset", "balancer", "model"]).agg(
     n_syn_in=("n_syn_in", "mean"), n_syn_leak=("n_syn_leak", "mean"))
 old = dg.groupby(["dataset", "balancer", "model"]).agg(
     n_old=("seed", "nunique"), total=("total", "mean"), real_old=("real", "mean"))
+# Matched version: leaky pipeline gets only as many synthetic points as the correct one
+# (exp_samefold.py --match-syn). This removes the effect of the larger synthetic count.
+if glob.glob(str(RES / "samematch_*.csv")):
+    sm = read_all("samematch_*.csv")
+    t2b = t2b.join(sm.groupby(["dataset", "balancer", "model"]).agg(
+        n_match=("seed", "nunique"), real_match=("real_same", "mean"),
+        real_match_se=("real_same", se)))
 t2b = t2b.join(old)
-t2b["rest"] = t2b["total"] - t2b["real_same"]
-t2b["share_real_same"] = t2b["real_same"] / t2b["total"]
-t2b.loc[t2b["total"] < 0.01, "share_real_same"] = float("nan")   # meaningless when total is tiny
+base = "real_match" if "real_match" in t2b.columns else "real_same"
+t2b["rest"] = t2b["total"] - t2b[base]
+t2b["share_real"] = t2b[base] / t2b["total"]   # uses real_match when available
+t2b.loc[t2b["total"] < 0.01, "share_real"] = float("nan")   # meaningless when total is tiny
 save(t2b.round(4), "bang_phan_ra_samefold.csv")
 
 # ---------------------------------------------------------------- Table 3

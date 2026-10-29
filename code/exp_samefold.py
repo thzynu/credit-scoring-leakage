@@ -41,6 +41,10 @@ def main():
     ap.add_argument("--models", nargs="+",
                     default=["logreg", "hgb_depth2", "rf_depth5", "knn5"])
     ap.add_argument("--nseeds", type=int, default=10)
+    ap.add_argument("--match-syn", action="store_true",
+                    help="leaky pipeline uses a random subset of the synthetic points, "
+                         "as many as the correct pipeline creates in that fold; "
+                         "writes samematch_*.csv instead of samefold_*.csv")
     args = ap.parse_args()
 
     cfg = E.DATASETS[args.data]
@@ -50,7 +54,8 @@ def main():
     cat_cols = [c for c in X.columns if not pd.api.types.is_numeric_dtype(X[c])]
     num_cols = [c for c in X.columns if c not in cat_cols]
 
-    out = ROOT / "results" / f"samefold_{args.data}_{args.bal}.csv"
+    prefix = "samematch" if args.match_syn else "samefold"
+    out = ROOT / "results" / f"{prefix}_{args.data}_{args.bal}.csv"
     out.parent.mkdir(exist_ok=True)
     done = set()
     if out.exists():
@@ -76,6 +81,7 @@ def main():
                 "sample order is not as expected"
             assert (yr[n:] == 1).all(), "synthetic points are not the positive class"
             syn_idx = np.arange(n, len(yr))
+            rng = np.random.RandomState(seed)
 
             a_in, a_leak, ns_in, ns_leak = [], [], [], []
             for tr, te in cv.split(Xp, yd):
@@ -85,10 +91,13 @@ def main():
                 a_in.append(roc_auc_score(yd[te], p))
                 ns_in.append(len(yb) - len(tr))
                 # leaky: globally balanced data, original test points removed
-                keep = np.concatenate([tr, syn_idx])
+                syn_use = syn_idx
+                if args.match_syn:
+                    syn_use = rng.choice(syn_idx, size=len(yb) - len(tr), replace=False)
+                keep = np.concatenate([tr, syn_use])
                 p = clone(model).fit(Xr[keep], yr[keep]).predict_proba(Xp[te])[:, 1]
                 a_leak.append(roc_auc_score(yd[te], p))
-                ns_leak.append(len(syn_idx))
+                ns_leak.append(len(syn_use))
 
             r = dict(dataset=args.data, balancer=args.bal, model=name, seed=seed,
                      cv_in_same=np.mean(a_in), leak_same=np.mean(a_leak),
