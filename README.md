@@ -79,8 +79,8 @@ anything. To check reproducibility, copy the folder elsewhere and delete `result
 | Dataset | Seeds | What is covered |
 |---|---|---|
 | German, Australian | 30 | all 7 models in `_v2`, `_nosmote`, and `diag_*_smote`; 4 models for ROS, Borderline, ADASYN and feature selection |
-| Taiwan | 10 | all 7 models in `_v2` and `_nosmote`; 4 models for ROS, Borderline, feature selection; `diag_*_smote`: `hgb_depth2`, `hgb_full`, `knn5`, `logreg`, `rf_depth5` with 10 seeds, `hgb_depth4` with 5, `rf_full` with 7; `diag_*_borderline`: `hgb_depth2`, `logreg` with 5 |
-| Lending Club | 3 to 5 | `diag_*_smote`: `hgb_depth2`, `hgb_depth4`, `hgb_full`, `knn5`, `logreg` (5 seeds); out-of-time: 7 models (5 seeds); cost: 3 models (3 seeds). No `_v2` hold-out run and no random-forest model in the decomposition |
+| Taiwan | 10 | all 7 models in `_v2` and `_nosmote`; 4 models for ROS, Borderline, feature selection; `diag_*_smote`: all 7 models with 10 seeds; `diag_*_borderline`: `hgb_depth2`, `logreg` with 5 |
+| Lending Club | 3 to 5 | `diag_*_smote`: `hgb_depth2`, `hgb_depth4`, `hgb_full`, `knn5`, `logreg` (5 seeds); `samematch_*`: `logreg`, `hgb_depth2`, `knn5` (5 seeds); out-of-time: 7 models (5 seeds); cost: 3 models (3 seeds). No `_v2` hold-out run and no random-forest model in the decomposition |
 
 ## Known limitations (must be stated in the paper)
 
@@ -96,7 +96,7 @@ anything. To check reproducibility, copy the folder elsewhere and delete `result
    eliminate it. `exp_samefold.py` (with `--match-syn`) repeats the decomposition on identical folds and a matched
    number of synthetic points; it agrees with the original decomposition to within about 0.002
    (`bang_phan_ra_samefold.csv`), so this is a robustness check rather than a flaw. It has only
-   3 seeds for Lending Club.
+   5 seeds for Lending Club (3 without `--match-syn`).
 6. The SEs in the tables only reflect the variation between splits on the same dataset. Do not use the
    very large z values as confidence in the conclusions.
 7. `exp_boot.py` uses a single seed and only resamples the test set, so it does not capture the variation
