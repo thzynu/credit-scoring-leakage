@@ -7,13 +7,13 @@ import pandas as pd
 from sklearn.base import clone
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold, cross_val_score, train_test_split
-from imblearn.over_sampling import SMOTE, BorderlineSMOTE
+from imblearn.over_sampling import ADASYN, SMOTE, BorderlineSMOTE
 from imblearn.pipeline import Pipeline
 
 import exp as E
 
 ROOT = Path(__file__).resolve().parent.parent
-BAL = {"smote": SMOTE, "borderline": BorderlineSMOTE}
+BAL = {"smote": SMOTE, "borderline": BorderlineSMOTE, 'adasyn': ADASYN}
 
 
 def main():

@@ -76,6 +76,8 @@ g = dg.groupby(["dataset", "balancer", "model"]).agg(
     n=("seed", "nunique"), total=("total", "mean"), real=("real", "mean"),
     real_se=("real", se), synth=("synth", "mean"), auc_syn=("auc_syn", "mean"))
 g["share_synth"] = g["synth"] / g["total"]   # only meaningful when |total| > ~0.01
+bad = (g["total"] < 0.01) | (g["real"] < 0) | (g["synth"] < 0)
+g.loc[bad, "share_synth"] = float("nan")   # leave blank when the split is meaningless
 save(g.round(4), "bang_phan_ra.csv")
 
 # ---------------------------------------------------------------- Table 3
