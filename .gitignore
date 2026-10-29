@@ -2,5 +2,3 @@ __pycache__/
 *.pyc
 data/gmsc.csv
 data/LC_loans_granting_model_dataset.csv
-data/LC_loans_granting_model_dataset.csv
-data/gmsc.csv
