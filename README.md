@@ -1,34 +1,35 @@
 # Preprocessing leakage and class balancing in credit scoring: experiment code
 
-This package contains the code and raw results of experiments that measure how much AUC is "inflated"
-when preprocessing steps (scaling, imputation, feature selection, class balancing) are performed
-**before splitting folds** instead of inside each fold. This is a draft for discussion with my advisor,
-not yet published code.
+This package contains the code and raw results of experiments that measure how much AUC is
+"inflated" when preprocessing steps (scaling, imputation, feature selection, class balancing) are
+performed before splitting folds instead of inside each fold. This is a draft for discussion with
+my advisor, not yet published code.
 
 ## Status
 
 | Item | Status |
 |---|---|
-| Experiment scripts | Logic kept exactly as it was run. Only changed: root path, removed BOM/CRLF, added 1 safety `assert` in `exp_diag.py` |
-| Re-run check | German, seed 1: `exp.py`, `exp_base.py`, `exp_bal.py`, `exp_diag.py`, `exp_sel.py` match `results/` **digit for digit** (difference 0). `exp_time.py`, `exp_cost.py`, `exp_boot.py`, `exp_q.py` were only smoke-tested (they run), numbers **not** compared |
-| `make_tables.py` | Reproduces the existing `tong_hop_chinh.csv` and `bang_phan_ra.csv` exactly (difference 0) |
-| Full run from scratch | **Not done**. Takes many hours; I did not run it |
-| Literature check (who has already reported leakage from class balancing before splitting folds) | **Not done**. It decides whether the paper is novel |
+| Experiment scripts | Logic kept exactly as it was run. Only changed: root path, removed BOM/CRLF, added 1 safety assert in `exp_diag.py` |
+| Re-run check | German, seed 1: `exp.py`, `exp_base.py`, `exp_bal.py`, `exp_diag.py`, `exp_sel.py` match `results/` digit for digit (difference 0). `exp_time.py`, `exp_cost.py`, `exp_boot.py`, `exp_q.py` were only smoke-tested (they run), numbers not compared |
+| `make_tables.py` | Rebuilds every summary table from the raw files in `results/` |
+| Full run from scratch | Not done. Takes many hours |
+| Data sources and licences | Documented in `DATA.md`. `gmsc.csv` is not included in the repository |
+| Literature check | Preliminary only. The main finding (balancing before the fold split inflates CV AUC) is already reported in the literature, including for credit scoring, so the contribution is limited to the decomposition below. A full review is still pending |
 
-Environment of the original experiments (from your `pip freeze`, see `requirements-lock.txt`):
-scikit-learn 1.8.0, imbalanced-learn 0.14.1, pandas 3.0.2, numpy 2.4.3. The Python version was not recorded
-and needs to be filled into `requirements-lock.txt`. I checked reproducibility on a slightly different environment
-(imbalanced-learn 0.14.2, numpy 2.4.4, Python 3.12.3) and the German seed 1 numbers still match digit for digit,
-but that is not evidence for every cell.
+Environment (see `requirements-lock.txt`, Python 3.13.12): scikit-learn 1.8.0, imbalanced-learn
+0.14.1, pandas 3.0.2, numpy 2.4.3. German seed 1 numbers were also reproduced on a slightly
+different environment (imbalanced-learn 0.14.2, numpy 2.4.4, Python 3.12.3), but that is not
+evidence for every cell.
 
 ## Structure
 
 ```
-code/      experiment scripts + make_tables.py
-data/      5 CSV files: german, australian, taiwan, gmsc, lendingclub_100k
-results/   raw results of every run (each row = one model x one seed)
+code/             experiment scripts + make_tables.py
+data/             CSV files (see DATA.md; gmsc.csv must be downloaded by the reader)
+results/          raw results of every run (each row = one model x one seed)
 results/tables/   summary tables produced by make_tables.py
-legacy/    old scripts and results that have been superseded, kept for comparison
+legacy/           old scripts and results that have been superseded, kept for comparison
+DATA.md           source, licence and citation of every dataset
 ```
 
 ## Install and run
@@ -39,16 +40,16 @@ python code/exp.py --data german --models logreg --nseeds 1
 python code/make_tables.py
 ```
 
-All scripts are **resumable**: if a (model, seed) pair is already in the result file, it is skipped.
-So if you re-run inside a `results/` folder that already has data, the script will not recompute anything.
-To check reproducibility, copy the folder elsewhere and delete `results/`.
+All scripts are resumable: if a (model, seed) pair is already in the result file, it is skipped.
+So if you re-run inside a `results/` folder that already has data, the script will not recompute
+anything. To check reproducibility, copy the folder elsewhere and delete `results/`.
 `run_all.ps1` (Windows) and `run_all.sh` list the commands equivalent to the saved results.
 
 ## What each script measures
 
 | Script | Measures | Output |
 |---|---|---|
-| `exp.py` | The correct pipeline versus the leaky variants: imputation, whole-data preprocessing, SMOTE before splitting folds, and hold-out. Run with `--data` = taiwan, german, australian, gmsc, lendingclub | `results/<data>_v2.csv` |
+| `exp.py` | The correct pipeline versus the leaky variants: imputation, whole-data preprocessing, SMOTE before splitting folds, and hold-out. `--data` = taiwan, german, australian, gmsc, lendingclub | `results/<data>_v2.csv` |
 | `exp_base.py` | Hold-out without SMOTE (baseline) | `<data>_nosmote.csv` |
 | `exp_sel.py` | Leakage from feature selection (`SelectKBest`) before splitting folds, at ratio `--kfrac` | `<data>_sel.csv` |
 | `exp_bal.py` | Comparison of class balancers: SMOTE, RandomOverSampler, BorderlineSMOTE, ADASYN | `<data>_bal_<balancer>.csv` |
@@ -62,36 +63,47 @@ To check reproducibility, copy the folder elsewhere and delete `results/`.
 
 ## How to read the tables
 
-- `tong_hop_chinh.csv`: the CV score increase caused by each type of leakage (`prep_tang`, `smote_tang`, `sel_tang`),
-  the correct hold-out, and the effect of SMOTE (`delta_smote`).
-- `bang_phan_ra.csv`: `real = auc_orig - cv_in` is true leakage; `synth = auc_all - auc_orig` is due to synthetic
-  points being in the scoring set; `total = auc_all - cv_in` is the inflation a reader sees.
-  `share_synth` is only meaningful when `|total|` is larger than about 0.01.
+- `tong_hop_chinh.csv`: the CV score increase caused by each type of leakage (`prep_tang`,
+  `smote_tang`, `sel_tang`), the correct hold-out, and the effect of SMOTE (`delta_smote`).
+- `bang_phan_ra.csv`: `real = auc_orig - cv_in` is true leakage; `synth = auc_all - auc_orig` is due
+  to synthetic points being in the scoring set; `total = auc_all - cv_in` is the inflation a reader
+  sees. `share_synth` is only meaningful when |total| is larger than about 0.01 (it is left empty
+  otherwise).
 - `bang_can_bang.csv`: `tang = cv_before - cv_in`, by balancer.
 - `bang_thoi_gian.csv`, `bang_chi_phi.csv`: Lending Club.
-- `bao_phu_seed.csv`: **number of seeds in each cell**. Look at this table before quoting any number.
+- `bao_phu_seed.csv`: number of seeds in each cell. **Look at this table before quoting any number.**
+
+## Coverage (see `bao_phu_seed.csv` for every cell)
+
+| Dataset | Seeds | What is covered |
+|---|---|---|
+| German, Australian | 30 | all 7 models in `_v2`, `_nosmote`, and `diag_*_smote`; 4 models for ROS, Borderline, ADASYN and feature selection |
+| Taiwan | 10 | all 7 models in `_v2` and `_nosmote`; 4 models for ROS, Borderline, feature selection; `diag_*_smote`: 4 models with 10 seeds, `hgb_full` and `rf_full` with 5; `diag_*_borderline`: `hgb_depth2`, `logreg` with 5 |
+| GMSC | 5 | 5 models in `_v2` and `_nosmote` (no `knn5`, `rf_full` at full size); `diag_*_smote`: `hgb_depth2`, `hgb_depth4`, `hgb_full`, `logreg` |
+| Lending Club | 3 to 5 | `diag_*_smote`: `hgb_depth2`, `hgb_depth4`, `hgb_full`, `knn5`, `logreg` (5 seeds); out-of-time: 7 models (5 seeds); cost: 3 models (3 seeds). No `_v2` hold-out run and no random-forest model in the decomposition |
 
 ## Known limitations (must be stated in the paper)
 
-1. **Uneven number of seeds.** German and Australian ran 30 seeds; Taiwan mostly 10 (only 5 for
-   `diag_*`, and `hgb_full`, `rf_full` in `diag_taiwan_smote` only 3); GMSC 5 (`knn5`, `rf_full`
-   only 3); Lending Club 3 to 5. See `bao_phu_seed.csv`.
-2. **`german_bal_smote.csv` has only 3 rows** (logreg, 3 seeds). For SMOTE use `diag_*` or the `smote_tang`
-   column in `tong_hop_chinh.csv`, not the balancing table.
-3. **The `bang_phan_ra` decomposition covers only two datasets** (German, Taiwan), SMOTE and Borderline.
-   Australian, GMSC, and Lending Club are missing. ADASYN has not been run.
-4. **Hyperparameters are left at their defaults**, not tuned.
-5. `cv_in` and `auc_orig` use two different fold splits (arrays of different sizes), so part of
-   the difference may come from fold composition. Averaging over many seeds reduces this but does not
-   eliminate it.
-6. **The SEs in the tables only reflect the variation between splits** on the same dataset. Do not
-   use the very large z values as confidence in the conclusions.
+1. **Uneven number of seeds** (table above). Quote the seed count next to every number.
+2. **The decomposition is incomplete.** ADASYN was run only for German and Australian; Borderline only
+   for German, Australian and Taiwan (Taiwan with 2 models); GMSC and Lending Club have SMOTE only
+   and fewer models.
+3. `german_bal_smote.csv` now has 30 seeds for 4 models. For all-model SMOTE results use `diag_*`
+   or the `smote_tang` column in `tong_hop_chinh.csv`.
+4. Hyperparameters are left at their defaults, not tuned.
+5. `cv_in` and `auc_orig` use two different fold splits (arrays of different sizes), so part of the
+   difference may come from fold composition. Averaging over many seeds reduces this but does not
+   eliminate it. A cleaner design would fix the folds of the correct pipeline and score the
+   leaky model on exactly the same original points.
+6. The SEs in the tables only reflect the variation between splits on the same dataset. Do not use the
+   very large z values as confidence in the conclusions.
 7. `exp_boot.py` uses a single seed and only resamples the test set, so it does not capture the variation
    from training.
-8. The mechanism explanations (the model "memorizing" the original points; Borderline flipping sign because
-   synthetic points lie close to the decision boundary) are **hypotheses**, not directly tested.
-9. The exact source of `gmsc.csv` and `lendingclub_100k.csv` and how the 100,000-row sample was drawn are
-   not recorded in the code.
+8. The mechanism explanations (the model "memorizing" the original points; Borderline flipping sign
+   because synthetic points lie close to the decision boundary) are hypotheses, not directly tested.
+9. Data provenance: see `DATA.md`. The Lending Club sample is verified row by row against the Zenodo
+   file (by `id`), but the sampling script and seed were not recorded. `gmsc.csv` is not
+   redistributed; the full Kaggle terms have not been read.
 
 ## Glossary of Vietnamese names kept in code and result files
 
