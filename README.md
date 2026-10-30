@@ -24,7 +24,7 @@ evidence for every cell.
 ## Citation
 
 If you use this code or the results, please cite the manuscript (details to be added on publication) and the
-archived release of this repository: [Zenodo DOI to be added after the first release].
+archived release of this repository: https://doi.org/10.5281/zenodo.23797523 (all versions: https://doi.org/10.5281/zenodo.23797522).
 
 ## License
 
