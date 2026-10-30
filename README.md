@@ -2,8 +2,9 @@
 
 This package contains the code and raw results of experiments that measure how much AUC is
 "inflated" when preprocessing steps (scaling, imputation, feature selection, class balancing) are
-performed before splitting folds instead of inside each fold. This is a draft for discussion with
-my advisor, not yet published code.
+performed before splitting folds instead of inside each fold. It accompanies the manuscript
+"Where Does the Inflation Come From? Decomposing Cross-Validation Leakage from Pre-Split Oversampling
+in Credit Scoring" (in preparation; see Citation below).
 
 ## Status
 
@@ -14,12 +15,21 @@ my advisor, not yet published code.
 | `make_tables.py` | Rebuilds every summary table from the raw files in `results/` |
 | Full run from scratch | Partly done (`repro_full`, 2026-10-29). Every row present in both runs agrees exactly (max difference 0) for the `_nosmote`, `_sel`, `_q_*`, `bal_*`, `lendingclub_time`, `lendingclub_cost`, `diag_german_*` and `diag_taiwan_*` files and for `_v2` of German and Australian. Exception: `cv_dung` and `leak_prep` in `taiwan_v2.csv` differ by up to 1.4e-3 (limitation 10). Second check (`repro_check`, 2026-10-30, `tools/compare_runs.py`): every row present in both runs agrees exactly (max difference 0, no extra rows) for `diag_australian_{smote,borderline,adasyn}`, `diag_german_{borderline,adasyn}`, `german_bal_smote`, `samefold_{german,australian}_smote` and `samematch_{german,australian}_smote` (all models, seeds 1 to 3), and for `diag_taiwan_adasyn`, `diag_lendingclub_smote`, `samematch_taiwan_smote`, `samematch_lendingclub_smote` (`logreg` and `hgb_depth2` only, seed 1). Not re-run: `samefold_taiwan`, `samefold_lendingclub`, the other models on Taiwan and Lending Club, and seeds above 3 for German and Australian |
 | Data sources and licences | Documented in `DATA.md`. GMSC was excluded (Kaggle licence: Competition Use only) |
-| Literature check | Preliminary only. The main finding (balancing before the fold split inflates CV AUC) is already reported in the literature, including for credit scoring, so the contribution is limited to the decomposition below. A full review is still pending |
 
 Environment (see `requirements-lock.txt`, Python 3.13.12): scikit-learn 1.8.0, imbalanced-learn
 0.14.1, pandas 3.0.2, numpy 2.4.3. German seed 1 numbers were also reproduced on a slightly
 different environment (imbalanced-learn 0.14.2, numpy 2.4.4, Python 3.12.3), but that is not
 evidence for every cell.
+
+## Citation
+
+If you use this code or the results, please cite the manuscript (details to be added on publication) and the
+archived release of this repository: [Zenodo DOI to be added after the first release].
+
+## License
+
+The code in `code/` and `tools/` is released under the MIT License (see `LICENSE`). The data files in `data/`
+keep the licences of their original sources, listed in `DATA.md` (all CC BY 4.0).
 
 ## Structure
 
