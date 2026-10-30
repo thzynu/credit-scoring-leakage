@@ -12,7 +12,7 @@ my advisor, not yet published code.
 | Experiment scripts | Logic kept exactly as it was run. Only changed: root path, removed BOM/CRLF, added 1 safety assert in `exp_diag.py` |
 | Re-run check | German, seed 1: `exp.py`, `exp_base.py`, `exp_bal.py`, `exp_diag.py`, `exp_sel.py` match `results/` digit for digit (difference 0). `exp_time.py`, `exp_cost.py`, `exp_boot.py`, `exp_q.py` were only smoke-tested (they run), numbers not compared |
 | `make_tables.py` | Rebuilds every summary table from the raw files in `results/` |
-| Full run from scratch | Not done. Takes many hours |
+| Full run from scratch | Partly done (`repro_full`, 2026-10-29). Every row present in both runs agrees exactly (max difference 0) for the `_nosmote`, `_sel`, `_q_*`, `bal_*`, `lendingclub_time`, `lendingclub_cost`, `diag_german_*` and `diag_taiwan_*` files and for `_v2` of German and Australian. Exception: `cv_dung` and `leak_prep` in `taiwan_v2.csv` differ by up to 1.4e-3 (limitation 10). Not re-run: `diag_*` for Australian, ADASYN and Lending Club, `german_bal_smote`, `samefold_*`, `samematch_*` |
 | Data sources and licences | Documented in `DATA.md`. GMSC was excluded (Kaggle licence: Competition Use only) |
 | Literature check | Preliminary only. The main finding (balancing before the fold split inflates CV AUC) is already reported in the literature, including for credit scoring, so the contribution is limited to the decomposition below. A full review is still pending |
 
@@ -106,6 +106,13 @@ anything. To check reproducibility, copy the folder elsewhere and delete `result
 9. Data provenance: see `DATA.md`. The Lending Club sample is verified row by row against the Zenodo
    file (by `id`), but the sampling script and seed were not recorded. GMSC was
    excluded (Kaggle licence: Competition Use only).
+10. **Parallelism changes a few numbers.** `cv_dung` and `leak_prep` of `exp.py` (cross-validation with SMOTE
+   inside the fold) depend on `--jobs`: for Taiwan, `--jobs 4` (original run) and `--jobs 2` (re-run) differ by up
+   to 1.4e-3, and `--jobs 1` gives a third value. `leak_both` and `holdout` do not change. The likely cause (not
+   tested) is that the number of BLAS threads changes with `--jobs`, which changes floating-point sums and the
+   nearest-neighbour choice in SMOTE when distances are almost tied. The effect is small against the inflation
+   (0.07 to 0.17) but similar to the standard error of the means (about 0.001), so read `prep_tang` as 0 within
+   about +-0.002. To re-run Taiwan use `--jobs 4` as in the original; other machines may still differ by about 1e-3.
 
 ## Glossary of Vietnamese names kept in code and result files
 
