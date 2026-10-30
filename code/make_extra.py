@@ -116,7 +116,7 @@ for ax, ds in zip(axes, DATASETS):
     g = g.set_index("model").reindex([m for m in MODEL_ORDER if m in set(g["model"])])
     x = np.arange(len(g))
     ax.bar(x - 0.2, g[col], 0.4, label="true leakage (training set)")
-    ax.bar(x + 0.2, g["total"] - g[col], 0.4, label="remainder (synthetic points in scoring set)")
+    ax.bar(x + 0.2, g["total"] - g[col], 0.4, label="remainder (total minus true leakage)")
     ax.set_xticks(x)
     ax.set_xticklabels(g.index, rotation=60, ha="right", fontsize=8)
     ax.set_title(ds)
