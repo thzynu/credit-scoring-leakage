@@ -96,12 +96,13 @@ old = dg.groupby(["dataset", "balancer", "model"]).agg(
     n_old=("seed", "nunique"), total=("total", "mean"), real_old=("real", "mean"))
 # Matched version: leaky pipeline gets only as many synthetic points as the correct one
 # (exp_samefold.py --match-syn). This removes the effect of the larger synthetic count.
+# OUTER join: a model that exists only in samematch_* (e.g. knn25, rf_leaf5) must not be dropped.
 if glob.glob(str(RES / "samematch_*.csv")):
     sm = read_all("samematch_*.csv")
     t2b = t2b.join(sm.groupby(["dataset", "balancer", "model"]).agg(
         n_match=("seed", "nunique"), real_match=("real_same", "mean"),
-        real_match_se=("real_same", se)))
-t2b = t2b.join(old)
+        real_match_se=("real_same", se)), how="outer")
+t2b = t2b.join(old, how="left")
 base = "real_match" if "real_match" in t2b.columns else "real_same"
 t2b["rest"] = t2b["total"] - t2b[base]
 t2b["share_real"] = t2b[base] / t2b["total"]   # uses real_match when available
@@ -142,6 +143,8 @@ for f in sorted(glob.glob(str(RES / "*.csv"))):
     if name in ("tong_hop_chinh.csv", "bang_phan_ra.csv"):
         continue
     dd = pd.read_csv(f)
+    if "model" not in dd.columns or "seed" not in dd.columns:
+        continue          # not a per-model result file (e.g. lendingclub_boot.csv)
     keys = [c for c in ("model", "variant", "frac", "kfrac") if c in dd.columns]
     for k, gg in dd.groupby(keys):
         k = k if isinstance(k, tuple) else (k,)
