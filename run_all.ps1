@@ -40,9 +40,8 @@ foreach ($d in "german", "australian") {
 }
 Run code\exp_samefold.py --data taiwan --bal smote --models logreg hgb_depth2 hgb_depth4 hgb_full rf_depth5 rf_full knn5 knn25 rf_leaf5 --nseeds 10 --match-syn
 Run code\exp_samefold.py --data taiwan --bal smote --models logreg hgb_depth2 hgb_depth4 hgb_full rf_depth5 rf_full knn5 --nseeds 10
-Run code\exp_samefold.py --data lendingclub --bal smote --models logreg hgb_depth2 rf_depth5 rf_leaf5 knn5 knn25 --nseeds 5 --match-syn
-# Optional and slow (not in the saved results unless you ran them): remaining Lending Club models
-# Run code\exp_samefold.py --data lendingclub --bal smote --models hgb_depth4 hgb_full --nseeds 5 --match-syn
+Run code\exp_samefold.py --data lendingclub --bal smote --models logreg hgb_depth2 hgb_depth4 hgb_full rf_depth5 rf_leaf5 knn5 knn25 --nseeds 5 --match-syn
+# Optional and slow (rf_full is NOT in the saved results for Lending Club):
 # Run code\exp_samefold.py --data lendingclub --bal smote --models rf_full --nseeds 3 --match-syn
 
 # --- QuantileTransformer variant

@@ -29,6 +29,7 @@ data/             CSV files (see DATA.md)
 results/          raw results of every run (each row = one model x one seed)
 results/tables/   summary tables produced by make_tables.py
 legacy/           old scripts and results that have been superseded, kept for comparison
+tools/            helper scripts used to check reproducibility (`check_taiwan.py`, `compare_runs.py`)
 DATA.md           source, licence and citation of every dataset
 ```
 
@@ -57,7 +58,7 @@ anything. To check reproducibility, copy the folder elsewhere and delete `result
 | `exp_samefold.py` | Repeats the decomposition with the correct and the leaky model scored on exactly the same folds and original points; `--match-syn` also matches the number of synthetic points | `samefold_*.csv`, `samematch_*.csv` |
 | `exp_time.py` | Lending Club: random split vs out-of-time split (train 2013 to 2015, test 2016) | `lendingclub_time.csv` |
 | `exp_cost.py` | Lending Club: decision cost with cost ratios 3, 5, 10; threshold chosen on the validation set | `lendingclub_cost.csv` |
-| `exp_boot.py` | Bootstrap confidence intervals of the 2016 AUC and of the paired AUC differences between models | printed to screen |
+| `exp_boot.py` | Bootstrap confidence intervals of the 2016 AUC and of the paired AUC differences between models | printed to screen and saved to `results/lendingclub_boot.csv` |
 | `exp_q.py`, `exp_base_q.py` | Variants using `QuantileTransformer` instead of `StandardScaler` (dataset names get the suffix `_q`) | `<data>_q_*.csv` |
 | `make_tables.py` | Builds every summary table from the raw files | `results/tables/*.csv` |
 
@@ -79,15 +80,14 @@ anything. To check reproducibility, copy the folder elsewhere and delete `result
 | Dataset | Seeds | What is covered |
 |---|---|---|
 | German, Australian | 30 | all 7 models in `_v2`, `_nosmote`, and `diag_*_smote`; 4 models for ROS, Borderline, ADASYN and feature selection |
-| Taiwan | 10 | all 7 models in `_v2` and `_nosmote`; 4 models for ROS, Borderline, feature selection; `diag_*_smote`: all 7 models with 10 seeds; `diag_*_borderline`: `hgb_depth2`, `logreg` with 5 |
-| Lending Club | 3 to 5 | `diag_*_smote`: `hgb_depth2`, `hgb_depth4`, `hgb_full`, `knn5`, `logreg` (5 seeds); `samematch_*`: `logreg`, `hgb_depth2`, `knn5` (5 seeds); out-of-time: 7 models (5 seeds); cost: 3 models (3 seeds). No `_v2` hold-out run and no random-forest model in the decomposition |
+| Taiwan | 10 | all 7 models in `_v2` and `_nosmote`; 4 models for ROS, Borderline, feature selection; `diag_*_smote`: all 7 models with 10 seeds; `diag_*_borderline` and `diag_*_adasyn`: 4 models (`logreg`, `hgb_depth2`, `rf_depth5`, `knn5`) with 10 seeds |
+| Lending Club | 3 to 5 | `diag_*_smote`: `logreg`, `hgb_depth2`, `hgb_depth4`, `hgb_full`, `rf_depth5`, `knn5` (5 seeds); `samematch_*`: `logreg`, `hgb_depth2`, `hgb_depth4`, `hgb_full`, `rf_depth5`, `rf_leaf5`, `knn5`, `knn25` (5 seeds); out-of-time: 7 models (5 seeds); cost: 3 models (3 seeds). No `rf_full` in the decomposition and no `_v2` hold-out run |
 
 ## Known limitations (must be stated in the paper)
 
 1. **Uneven number of seeds** (table above). Quote the seed count next to every number.
-2. **The decomposition is incomplete.** ADASYN was run only for German and Australian; Borderline only
-   for German, Australian and Taiwan (Taiwan with 2 models); Lending Club has SMOTE only
-   and fewer models.
+2. **The decomposition is incomplete.** ADASYN and Borderline were run for German, Australian and Taiwan
+   (4 models each: `logreg`, `hgb_depth2`, `rf_depth5`, `knn5`); Lending Club has SMOTE only, without `rf_full`.
 3. `german_bal_smote.csv` now has 30 seeds for 4 models. For all-model SMOTE results use `diag_*`
    or the `smote_tang` column in `tong_hop_chinh.csv`.
 4. Hyperparameters are left at their defaults, not tuned.
@@ -99,8 +99,9 @@ anything. To check reproducibility, copy the folder elsewhere and delete `result
    5 seeds for Lending Club (3 without `--match-syn`).
 6. The SEs in the tables only reflect the variation between splits on the same dataset. Do not use the
    very large z values as confidence in the conclusions.
-7. `exp_boot.py` uses a single seed and only resamples the test set, so it does not capture the variation
-   from training.
+7. `exp_boot.py` runs one bootstrap per training seed (default seeds 1 to 5) and resamples only the 2016
+   test set. It reports test-set uncertainty and the spread across training seeds separately; it gives no
+   confidence interval for the leakage inflation itself.
 8. The mechanism explanations (the model "memorizing" the original points; Borderline flipping sign
    because synthetic points lie close to the decision boundary) are hypotheses, not directly tested.
 9. Data provenance: see `DATA.md`. The Lending Club sample is verified row by row against the Zenodo

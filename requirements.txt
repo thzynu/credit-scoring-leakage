@@ -1,6 +1,8 @@
 # Minimum versions required by the APIs the code uses (OneHotEncoder sparse_output, min_frequency).
-# Verified against the results with: Python 3.12.3, scikit-learn 1.8.0, imbalanced-learn 0.14.2,
-# pandas 3.0.2, numpy 2.4.4. Older versions have NOT been tested.
+# The saved results were produced with the versions in requirements-lock.txt (Python 3.13.12,
+# scikit-learn 1.8.0, imbalanced-learn 0.14.1, pandas 3.0.2, numpy 2.4.3).
+# Python 3.12.3 / imbalanced-learn 0.14.2 / numpy 2.4.4 reproduced German seed 1 only.
+# Older versions have NOT been tested.
 scikit-learn>=1.2
 imbalanced-learn>=0.10
 pandas>=1.5
