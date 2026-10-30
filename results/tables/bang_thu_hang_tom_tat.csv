@@ -1,0 +1,5 @@
+dataset,n_models,kendall_tau,p_value,top_true,top_leaky,min_seeds
+australian,7,0.5238,0.1361,hgb_depth2,rf_full,30
+german,7,0.3333,0.3813,rf_full,rf_full,30
+lendingclub,7,-0.2381,0.5619,logreg,rf_full,5
+taiwan,7,0.0476,1.0,rf_depth5,rf_full,10
