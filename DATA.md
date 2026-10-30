@@ -54,5 +54,4 @@ Kaggle competition "Give Me Some Credit" (Credit Fusion, 2011), https://www.kagg
 GMSC was explored early on but is excluded from the study and from this repository. Its Data Access
 and Use setting is "Competition Use only" (checked 29/10/2026), which allows the data to be used only
 to take part in the competition and on the Kaggle forums, not for publications. Result files that
-used it were removed from `results/`. They may still exist in earlier git history of this private
-repository, so rewrite the history before making the repository public.
+used it were removed from `results/`. They were also removed from the git history (rewritten on 2026-10-30).
