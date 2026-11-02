@@ -1,0 +1,3 @@
+dataset,n_seed,d_nearest_original_pos,d_nearest_clean_syn,d_nearest_contaminated_syn,nn5_share_contaminated,nearest_syn_is_contaminated
+australian,30,1.875,2.57,2.34,0.153,0.584
+german,30,3.139,3.092,0.961,0.546,0.915
