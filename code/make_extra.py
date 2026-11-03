@@ -131,8 +131,8 @@ save_fig(fig, "fig1_decomposition", tight=False)
 sm = read_all("samematch_*.csv")
 sm = sm[sm["balancer"] == "smote"]
 g = sm.groupby(["dataset", "model"])["real_same"].agg(["mean", "sem"]).reset_index()
-groups = [("kNN: larger k memorises less", ["knn5", "knn25"]),
-          ("Random forest: deeper trees memorise more", ["rf_depth5", "rf_leaf5", "rf_full"])]
+groups = [("kNN: larger k, less leakage", ["knn5", "knn25"]),
+          ("Random forest: deeper trees, more leakage", ["rf_depth5", "rf_leaf5", "rf_full"])]
 fig, axes = plt.subplots(1, 2, figsize=(11, 3.8))
 for ax, (title, models) in zip(axes, groups):
     w = 0.8 / len(models)
@@ -148,17 +148,22 @@ axes[0].set_ylabel("true leakage (AUC)")
 save_fig(fig, "fig2_memorisation")
 
 # ------------------------------------------------------------------ Figure 3: leaky vs true
-fig, axes = plt.subplots(1, 4, figsize=(15, 3.8))
+fig, axes = plt.subplots(1, 4, figsize=(15, 4.3))
+main_models = ["logreg", "knn5", "rf_depth5", "rf_full", "hgb_depth2", "hgb_depth4", "hgb_full"]
+cmap = {mm: plt.cm.tab10(i) for i, mm in enumerate(main_models)}
+marks = dict(zip(main_models, ["o", "s", "^", "v", "D", "P", "X"]))
 for ax, ds in zip(axes, DATASETS):
     h = a[a["dataset"] == ds]
-    ax.scatter(h["holdout"], h["leaky_cv"])
     for _, r in h.iterrows():
-        ax.annotate(r["model"], (r["holdout"], r["leaky_cv"]), fontsize=6,
-                    xytext=(2, 2), textcoords="offset points")
+        ax.scatter(r["holdout"], r["leaky_cv"], s=38, color=cmap[r["model"]],
+                   marker=marks[r["model"]], label=r["model"], zorder=3)
     lo = min(h["holdout"].min(), h["leaky_cv"].min()) - 0.01
     hi = max(h["holdout"].max(), h["leaky_cv"].max()) + 0.01
     ax.plot([lo, hi], [lo, hi], "k--", lw=0.6)
     ax.set_title(ds)
     ax.set_xlabel("correct hold-out AUC")
 axes[0].set_ylabel("leaky CV AUC")
-save_fig(fig, "fig3_leaky_vs_true")
+hh, ll = axes[0].get_legend_handles_labels()
+fig.legend(hh, ll, loc="lower center", ncol=7, fontsize=8, frameon=False)
+fig.subplots_adjust(bottom=0.26, left=0.05, right=0.99, wspace=0.25)
+save_fig(fig, "fig3_leaky_vs_true", tight=False)
