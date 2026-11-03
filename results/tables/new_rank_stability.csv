@@ -1,0 +1,5 @@
+dataset,n_seed,tau_mean,tau_sd,tau_lo,tau_hi,share_tau_positive,top1_agree_share,leaky_top_is_rf_full_share,mean_rank_of_clean_best_under_leaky,discordant_pairs,discordant_pairs_clean_gap_lt_0005,tau_of_seed_means,p_of_seed_means
+australian,30,0.2957,0.2435,0.2129,0.3845,0.9,0.1333,0.5333,3.4333,7.3333,2.5667,0.5238,0.1361
+german,30,0.1825,0.2444,0.0921,0.2635,0.7667,0.2,1.0,3.8,8.5667,1.5,0.3333,0.3813
+taiwan,10,0.0571,0.114,0.0,0.1333,0.7,0.0,1.0,4.9,9.9,1.8,0.0476,1.0
+lendingclub,5,-0.3143,0.1413,-0.4286,-0.2,0.0,0.0,1.0,7.0,13.8,1.8,-0.2381,0.5619

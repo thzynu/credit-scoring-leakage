@@ -1,0 +1,9 @@
+dataset,model,balancer,n_seed,tang,tang_se,phong,holdout
+german,hgb_depth2,smote,30,0.1271,0.0015,0.1198,0.785
+german,hgb_depth2,smotenc,30,0.1085,0.0019,0.1035,0.7757
+german,knn5,smote,30,0.1459,0.0025,0.1416,0.7076
+german,knn5,smotenc,30,0.1729,0.003,0.1737,0.7088
+german,logreg,smote,30,0.0462,0.0019,0.038,0.7826
+german,logreg,smotenc,30,0.0934,0.0014,0.0873,0.7699
+german,rf_depth5,smote,30,0.1205,0.0014,0.1167,0.7831
+german,rf_depth5,smotenc,30,0.1046,0.001,0.101,0.7732

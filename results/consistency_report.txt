@@ -1,0 +1,58 @@
+﻿
+(1) Table 5 smote increase (exp.py: leak_both - leak_prep) vs Table 6 total (exp_diag.py: auc_all - cv_in)
+dataset      model  n_common      t5      t6  leak_both_minus_auc_all  leak_prep_minus_cv_in     diff  n_seed_v2  n_seed_diag
+ taiwan hgb_depth2        10 0.07274 0.07269                      0.0               -0.00005  0.00005         10           10
+ taiwan hgb_depth4        10 0.12264 0.12252                      0.0               -0.00012  0.00012         10           10
+ taiwan   hgb_full        10 0.15306 0.15286                      0.0               -0.00020  0.00020         10           10
+ taiwan    rf_full        10 0.17325 0.17341                      0.0                0.00016 -0.00016         10           10
+-> if leak_both_minus_auc_all is 0 and leak_prep_minus_cv_in is not, the gap comes from the two
+   'inside the fold' runs (different n_jobs / different seeds), not from the leaky estimate.
+
+(2) rounding: round(real_match,4)+round(rest,4) vs round(total,4)
+    dataset      model  total  real_match   rest
+ australian hgb_depth2 0.0062      0.0011 0.0050
+ australian hgb_depth4 0.0086      0.0026 0.0059
+     german hgb_depth2 0.1271      0.0171 0.1101
+     german  rf_depth5 0.1205      0.0259 0.0945
+lendingclub hgb_depth2 0.1618      0.0020 0.1597
+     taiwan   hgb_full 0.1529      0.0201 0.1327
+     taiwan     logreg 0.0061      0.0009 0.0051
+-> in the manuscript tables print rest = round(total,4) - round(real_match,4) so the rounded columns add up.
+
+(3) provenance real_matched vs samematch real_same (same seeds)
+german: rows=270  max|diff|=0.00e+00
+australian: rows=270  max|diff|=0.00e+00
+taiwan: rows=90  max|diff|=0.00e+00
+lendingclub: rows=30  max|diff|=0.00e+00
+
+(4) duplicate keys / missing values in result files
+
+(5) cells with fewer seeds than planned (german 30, australian 30, taiwan 10, lendingclub 5)
+                file     model  n_seed  planned
+lendingclub_cost.csv  hgb_full       3        5
+lendingclub_cost.csv    logreg       3        5
+lendingclub_cost.csv rf_depth5       3        5
+
+(6) manuscript claims vs recomputed values
+                                                            claim  manuscript  recomputed status
+                                        German max SMOTE increase       0.146      0.1459     ok
+                                        Taiwan max SMOTE increase       0.176      0.1757     ok
+                                    Australian min SMOTE increase       0.005      0.0054     ok
+                                    Australian max SMOTE increase       0.014      0.0139     ok
+     max |preprocessing change|, standard scaling (4.2.1: 0.0010)       0.001      0.0010     ok
+max |preprocessing change|, quantile scaling (4.2.1: below 0.002)       0.002      0.0016     ok
+                     max inflation vs out-of-time (abstract 0.32)       0.320      0.3247     ok
+                             min inflation vs out-of-time (0.006)       0.006      0.0064     ok
+                                             knn5 share min (50%)       0.500      0.5021     ok
+                                             knn5 share max (79%)       0.790      0.7888     ok
+                                          rf_full share min (34%)       0.340      0.3415     ok
+                                          rf_full share max (59%)       0.590      0.5949     ok
+                    boosting share max on German/Taiwan/LC (0.20)       0.200      0.2031     ok
+                                  LC mean prediction logreg smote       0.471      0.4707     ok
+                            LC mean prediction logreg khong_smote       0.192      0.1923     ok
+                                LC mean prediction hgb_full smote       0.265      0.2647     ok
+                               LC mean prediction rf_depth5 smote       0.473      0.4729     ok
+                           k 5 -> 25 leakage reduction australian       0.640      0.6429     ok
+                               k 5 -> 25 leakage reduction german       0.650      0.6506     ok
+                               k 5 -> 25 leakage reduction taiwan       0.640      0.6429     ok
+                          k 5 -> 25 leakage reduction lendingclub       0.600      0.6014     ok

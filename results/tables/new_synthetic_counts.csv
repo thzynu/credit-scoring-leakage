@@ -1,0 +1,5 @@
+dataset,n_seed,synthetic_total,created_by_correct_pipeline,contaminated,clean,contaminated_via_base,contaminated_via_neighbour_only,not_used_by_matched_leaky_model,contaminated_share
+australian,30,60.0,48.0,21.74,38.26,12.0,9.74,12.0,0.3623
+german,30,320.0,256.0,115.4733,204.5267,64.0,51.4733,64.0,0.3609
+lendingclub,5,47900.0,38320.0,17248.76,30651.24,9580.0,7668.76,9580.0,0.3601
+taiwan,10,13382.0,10705.6,4814.64,8567.36,2676.4,2138.24,2676.4,0.3598

@@ -1,0 +1,5 @@
+dataset,model,n_seed,d_tang,d_tang_se,d_holdout,d_holdout_se
+german,hgb_depth2,30,-0.0186,0.0012,-0.0093,0.0028
+german,knn5,30,0.0269,0.0027,0.0012,0.0036
+german,logreg,30,0.0472,0.0016,-0.0127,0.0025
+german,rf_depth5,30,-0.0158,0.0012,-0.0099,0.0024
