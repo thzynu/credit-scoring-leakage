@@ -61,3 +61,14 @@ Run code\exp_boot.py --seeds 1 2 3 4 5
 Run code\make_tables.py
 Run code\sens_table.py
 Run code\make_extra.py
+
+# --- Added for the revision (closed decomposition, ratio, SMOTENC, calibration)
+Run code\exp_joint.py --data german --nseeds 30 --models logreg knn5 rf_depth5 rf_full hgb_depth2 hgb_depth4 hgb_full knn1 knn3 knn15 knn25 knn50 knn100 rf_depth3 rf_depth10 rf_leaf2 rf_leaf5 rf_leaf10 rf_leaf20 hgb_depth1 hgb_depth3 hgb_depth6 hgb_depth4_iter300 hgb_depth2_noes hgb_full_noes
+Run code\exp_ratio.py --data german --nseeds 30
+Run code\exp_smotenc.py --data german --nseeds 30
+Run code\exp_bal.py --data australian --bal ros --models logreg hgb_depth2 rf_depth5 knn5 --nseeds 30
+Run code\exp_calib.py --nseeds 10
+Run tools\summarize_provenance.py
+Run tools\summarize_new.py
+Run tools\rank_stats.py
+Run tools\check_consistency.py
