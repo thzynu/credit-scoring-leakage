@@ -11,7 +11,7 @@ in Credit Scoring" (in preparation; see Citation below).
 | Item | Status |
 |---|---|
 | Experiment scripts | Logic kept exactly as it was run. Only changed: root path, removed BOM/CRLF, added 1 safety assert in `exp_diag.py` |
-| Re-run check | German, seed 1: `exp.py`, `exp_base.py`, `exp_bal.py`, `exp_diag.py`, `exp_sel.py` match `results/` digit for digit (difference 0). `exp_time.py`, `exp_cost.py`, `exp_boot.py`, `exp_q.py` were only smoke-tested (they run), numbers not compared |
+| Re-run check | German, seed 1: `exp.py`, `exp_base.py`, `exp_bal.py`, `exp_diag.py`, `exp_sel.py` match `results/` digit for digit (difference 0). `exp_boot.py` was only smoke-tested (it runs), numbers not compared. `exp_time.py`, `exp_cost.py` and `exp_q.py` were compared in the full re-run (next row) |
 | `make_tables.py` | Rebuilds every summary table from the raw files in `results/` |
 | Full run from scratch | Partly done (`repro_full`, 2026-10-29). Every row present in both runs agrees exactly (max difference 0) for the `_nosmote`, `_sel`, `_q_*`, `bal_*`, `lendingclub_time`, `lendingclub_cost`, `diag_german_*` and `diag_taiwan_*` files and for `_v2` of German and Australian. Exception: `cv_dung` and `leak_prep` in `taiwan_v2.csv` differ by up to 1.4e-3 (limitation 10). Second check (`repro_check`, 2026-10-30, `tools/compare_runs.py`): every row present in both runs agrees exactly (max difference 0, no extra rows) for `diag_australian_{smote,borderline,adasyn}`, `diag_german_{borderline,adasyn}`, `german_bal_smote`, `samefold_{german,australian}_smote` and `samematch_{german,australian}_smote` (all models, seeds 1 to 3), and for `diag_taiwan_adasyn`, `diag_lendingclub_smote`, `samematch_taiwan_smote`, `samematch_lendingclub_smote` (`logreg` and `hgb_depth2` only, seed 1). Not re-run: `samefold_taiwan`, `samefold_lendingclub`, the other models on Taiwan and Lending Club, and seeds above 3 for German and Australian |
 | Data sources and licences | Documented in `DATA.md`. GMSC was excluded (Kaggle licence: Competition Use only) |
@@ -80,10 +80,28 @@ anything. To check reproducibility, copy the folder elsewhere and delete `result
   to synthetic points being in the scoring set; `total = auc_all - cv_in` is the inflation a reader
   sees. `share_synth` is only meaningful when |total| is larger than about 0.01 (it is left empty
   otherwise).
-- `bang_phan_ra_samefold.csv`: same-folds decomposition. `real_match` (matched synthetic count) is the main estimate of true leakage; `rest = total - real_old` mixes two designs, so call it "the remainder", not a measured component.
+- `bang_phan_ra_samefold.csv`: same-folds decomposition. `real_match` (matched synthetic count) is the main estimate of true leakage; `rest = total - real_match` (total from the old design, `real_match` from the matched same-fold design) mixes two designs, so call it "the remainder", not a measured component.
 - `bang_can_bang.csv`: `tang = cv_before - cv_in`, by balancer.
 - `bang_thoi_gian.csv`, `bang_chi_phi.csv`: Lending Club.
 - `bao_phu_seed.csv`: number of seeds in each cell. **Look at this table before quoting any number.**
+
+## Figure files and manuscript figure numbers
+
+| File in `results/figures/` | Manuscript |
+|---|---|
+| (framework diagram, drawn separately) | Fig. 1 |
+| `fig1_decomposition.(png\|pdf)` | Fig. 2 |
+| `fig2_memorisation.(png\|pdf)` | Fig. 3 |
+| `fig3_leaky_vs_true.(png\|pdf)` | Fig. 4 |
+
+Rebuild with `python code/make_tables.py` then `python code/make_extra.py`.
+
+## Two data bases for Lending Club
+
+- Decomposition experiments (`diag_lendingclub_*`, `samefold_lendingclub_*`, `samematch_lendingclub_*`; Tables 6 and 7, Figs. 2 and 3): the full 100,001-loan sample (2007 to 2018), random 80/20 split.
+- Time-based experiments (`lendingclub_time.csv`, `lendingclub_cost.csv`; Tables 9, 10, 12, Fig. 4): only loans issued 2013 to 2015 (54,424) are split 80/20 into development and random hold-out; loans issued in 2016 (21,745) are the out-of-time test set. In `lendingclub_cost.csv` the 20% hold-out is used as the validation split for the threshold.
+
+Values from the two settings are not directly comparable.
 
 ## Coverage (see `bao_phu_seed.csv` for every cell)
 

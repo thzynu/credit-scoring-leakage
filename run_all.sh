@@ -53,3 +53,26 @@ $P/exp_boot.py --seeds 1 2 3 4 5
 $P/make_tables.py
 $P/sens_table.py
 $P/make_extra.py
+
+# --- Added for the revision (closed decomposition, ratio, SMOTENC, calibration, scoring)
+python code/exp_joint.py --data german --models logreg knn5 rf_depth5 rf_full hgb_depth2 hgb_depth4 hgb_full knn1 knn3 knn15 knn25 knn50 knn100 rf_depth3 rf_depth10 rf_leaf2 rf_leaf5 rf_leaf10 rf_leaf20 hgb_depth1 hgb_depth3 hgb_depth6 hgb_depth4_iter300 hgb_depth2_noes hgb_full_noes --nseeds 30
+python code/exp_joint.py --data australian --models logreg knn5 rf_depth5 rf_full hgb_depth2 hgb_depth4 hgb_full knn1 knn3 knn15 knn25 knn50 knn100 rf_depth3 rf_depth10 rf_leaf2 rf_leaf5 rf_leaf10 rf_leaf20 hgb_depth1 hgb_depth3 hgb_depth6 hgb_depth4_iter300 hgb_depth2_noes hgb_full_noes --nseeds 30
+python code/exp_joint.py --data taiwan --models logreg knn5 rf_depth5 rf_full hgb_depth2 hgb_depth4 hgb_full knn1 knn3 knn15 knn25 knn50 knn100 rf_depth3 rf_depth10 rf_leaf2 rf_leaf5 rf_leaf10 rf_leaf20 hgb_depth1 hgb_depth3 hgb_depth6 hgb_depth4_iter300 hgb_depth2_noes hgb_full_noes --nseeds 10
+python code/exp_joint.py --data lendingclub --models logreg knn5 knn25 rf_depth5 hgb_depth2 hgb_depth4 hgb_full hgb_depth2_noes hgb_full_noes --nseeds 5
+python code/exp_provenance.py --data german --models rf_depth5 hgb_depth4 knn25 rf_leaf5 --nseeds 30
+python code/exp_provenance.py --data australian --models rf_depth5 hgb_depth4 knn25 rf_leaf5 --nseeds 30
+python code/exp_provenance.py --data taiwan --models rf_depth5 rf_full rf_leaf5 --nseeds 10
+python code/exp_provenance.py --data lendingclub --models logreg knn5 knn25 hgb_depth2 hgb_depth2_noes hgb_full hgb_full_noes hgb_depth4 --nseeds 5
+python code/exp_scoring.py --data german --models rf_depth5 hgb_depth4 knn25 rf_leaf5 --nseeds 30
+python code/exp_scoring.py --data australian --models rf_depth5 hgb_depth4 knn25 rf_leaf5 --nseeds 30
+python code/exp_scoring.py --data lendingclub --models rf_depth5 hgb_depth4 --nseeds 5
+python code/exp_ratio.py --data german --nseeds 30
+python code/exp_ratio.py --data australian --ratios 0.85 0.9 1.0 --nseeds 30
+python code/exp_ratio.py --data taiwan --models logreg knn5 hgb_depth2 --nseeds 10
+python code/exp_smotenc.py --data german --nseeds 30
+python code/exp_bal.py --data australian --bal ros --models logreg hgb_depth2 rf_depth5 knn5 --nseeds 30
+python code/exp_calib.py --nseeds 10
+python tools/summarize_provenance.py
+python tools/summarize_new.py
+python tools/rank_stats.py
+python tools/check_consistency.py
