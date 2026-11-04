@@ -13,7 +13,7 @@ in Credit Scoring" (in preparation; see Citation below).
 | Experiment scripts | Logic kept exactly as it was run. Only changed: root path, removed BOM/CRLF, added 1 safety assert in `exp_diag.py` |
 | Re-run check | German, seed 1: `exp.py`, `exp_base.py`, `exp_bal.py`, `exp_diag.py`, `exp_sel.py` match `results/` digit for digit (difference 0). `exp_boot.py` was only smoke-tested (it runs), numbers not compared. `exp_time.py`, `exp_cost.py` and `exp_q.py` were compared in the full re-run (next row) |
 | `make_tables.py` | Rebuilds every summary table from the raw files in `results/` |
-| Full run from scratch | Partly done (`repro_full`, 2026-10-29). Every row present in both runs agrees exactly (max difference 0) for the `_nosmote`, `_sel`, `_q_*`, `bal_*`, `lendingclub_time`, `lendingclub_cost`, `diag_german_*` and `diag_taiwan_*` files and for `_v2` of German and Australian. Exception: `cv_dung` and `leak_prep` in `taiwan_v2.csv` differ by up to 1.4e-3 (limitation 10). Second check (`repro_check`, 2026-10-30, `tools/compare_runs.py`): every row present in both runs agrees exactly (max difference 0, no extra rows) for `diag_australian_{smote,borderline,adasyn}`, `diag_german_{borderline,adasyn}`, `german_bal_smote`, `samefold_{german,australian}_smote` and `samematch_{german,australian}_smote` (all models, seeds 1 to 3), and for `diag_taiwan_adasyn`, `diag_lendingclub_smote`, `samematch_taiwan_smote`, `samematch_lendingclub_smote` (`logreg` and `hgb_depth2` only, seed 1). Not re-run: `samefold_taiwan`, `samefold_lendingclub`, the other models on Taiwan and Lending Club, and seeds above 3 for German and Australian |
+| Full run from scratch | Partly done (`repro_full`, 2026-10-29). Every row present in both runs agrees exactly (max difference 0) for the `_nosmote`, `_sel`, `_q_*`, `bal_*`, `lendingclub_time`, `lendingclub_cost`, `diag_german_*` and `diag_taiwan_*` files and for `_v2` of German and Australian. Exception: `cv_dung` and `leak_prep` in `taiwan_v2.csv` differ by up to 1.4e-3 (limitation 10). Second check (`repro_check`, 2026-10-30, `tools/compare_runs.py`): every row present in both runs agrees exactly (max difference 0, no extra rows) for `diag_australian_{smote,borderline,adasyn}`, `diag_german_{borderline,adasyn}`, `german_bal_smote`, `samefold_{german,australian}_smote` and `samematch_{german,australian}_smote` (all models, seeds 1 to 3), and for `diag_taiwan_adasyn`, `diag_lendingclub_smote`, `samematch_taiwan_smote`, `samematch_lendingclub_smote` (`logreg` and `hgb_depth2` only, seed 1). Re-run on 2026-11-04 (`leakage_repro`, `tools/compare_runs.py`, seeds 1 to 2): max difference 0 for `samefold_{taiwan,lendingclub}_smote`, `samematch_{taiwan,lendingclub}_smote` and `joint_{taiwan,lendingclub}_smote` (`logreg`, `hgb_depth2`, `knn5` on Taiwan; `logreg`, `hgb_depth2` on Lending Club) |
 | Data sources and licences | Documented in `DATA.md`. GMSC was excluded (Kaggle licence: Competition Use only) |
 
 Environment (see `requirements-lock.txt`, Python 3.13.12): scikit-learn 1.8.0, imbalanced-learn
@@ -130,8 +130,7 @@ Values from the two settings are not directly comparable.
 7. `exp_boot.py` runs one bootstrap per training seed (default seeds 1 to 5) and resamples only the 2016
    test set. It reports test-set uncertainty and the spread across training seeds separately; it gives no
    confidence interval for the leakage inflation itself.
-8. The mechanism explanations (the model "memorizing" the original points; Borderline flipping sign
-   because synthetic points lie close to the decision boundary) are hypotheses, not directly tested.
+8. Mechanism. Two channels are now measured directly (`exp_provenance.py`, `exp_scoring.py`, `exp_joint.py`): synthetic points built from validation points (leakage) and synthetic positives added to the validation set (scoring). Their effects do not add up (the interaction term is negative for kNN and deep forests), so the paper reports joint = leak + scoring + interaction. The explanation for Borderline-SMOTE sign changes (synthetic points near the decision boundary) is still a hypothesis, not directly tested. Seeds are repeated splits of one dataset, not independent samples.
 9. Data provenance: see `DATA.md`. The Lending Club sample is verified row by row against the Zenodo
    file (by `id`), but the sampling script and seed were not recorded. GMSC was
    excluded (Kaggle licence: Competition Use only).
@@ -162,3 +161,22 @@ Column, file, and label names were left unchanged so the code still matches the 
 | `bao_phu_seed` | seed coverage |
 | `legacy/tong_hop_*`, `xem_du_lieu` | old summary scripts, "view data" |
 | `hang_that`, `hang_ro_ri` | true rank, leaky rank |
+
+## Revision experiments (added 2026-11-04)
+
+| Script | What it measures | Output (results/) |
+|---|---|---|
+| `code/exp_provenance.py` | Which synthetic points have a parent in the validation fold; matched-size variants (0.5x, 1x, 2x); distance geometry | `provenance_*`, `provgeom_*` |
+| `code/exp_scoring.py` | Scoring channel: correctly trained model scored on originals plus synthetic positives | `scoring_*` |
+| `code/exp_joint.py` | Closed decomposition joint = leak + scoring + interaction; capacity grid; early stopping off (`*_noes`) | `joint_*` |
+| `code/exp_ratio.py` | Effect of the oversampling ratio | `ratio_*` |
+| `code/exp_smotenc.py` | SMOTE on one-hot columns versus SMOTENC | `smotenc_*` |
+| `code/exp_calib.py` | Lending Club: calibration, class weighting, decision cost, bootstrap intervals | `calib_lendingclub.csv`, `calibcurve_lendingclub.csv` |
+| `tools/summarize_provenance.py`, `tools/summarize_new.py` | Summary tables and figures | `tables/new_*`, `figures/new_*` |
+| `tools/rank_stats.py` | Ranking stability (Kendall tau) and paired intervals (Nadeau-Bengio corrected) | `tables/new_rank_stability.csv`, `tables/new_paired_ci.csv` |
+| `tools/check_consistency.py` | Consistency audit of raw results and manuscript numbers | `consistency_report.txt` |
+
+Do not re-run `code/exp_cost.py`: it overwrites `lendingclub_cost.csv` (3 seeds, superseded by `calib_lendingclub.csv`, 10 seeds).
+`rf_full` on Lending Club is not run for `joint`, `scoring` and `diag` (hours per seed).
+
+Environment used for these runs: scikit-learn 1.8.0, imbalanced-learn 0.14.1, numpy 2.4.3, pandas 3.0.2, scipy 1.17.1, matplotlib 3.10.9.
