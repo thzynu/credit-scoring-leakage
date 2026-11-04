@@ -114,3 +114,44 @@ for d, claimed in [("australian", 0.64), ("german", 0.65), ("taiwan", 0.64), ("l
     x = s[s["dataset"] == d].set_index("model")["real_match"]
     add(f"k 5 -> 25 leakage reduction {d}", claimed, 1 - x["knn25"] / x["knn5"], 0.006)
 print(pd.DataFrame(cl).to_string(index=False))
+print("\n(7) manuscript claims of the revised version vs the new tables")
+nd = pd.read_csv(T / "new_decomp_closed.csv")
+rk = pd.read_csv(T / "new_rank_stability.csv").set_index("dataset")
+cl2 = []
+
+
+def add2(name, claimed, got, tol=0.006):
+    cl2.append(dict(claim=name, manuscript=claimed, recomputed=round(float(got), 4),
+                    status="ok" if abs(claimed - got) <= tol else "CHECK"))
+
+
+k5 = nd[nd["model"] == "knn5"]
+add2("knn5 leakage share of joint, min (0.53)", 0.53, k5["leak_share"].min())
+add2("knn5 leakage share of joint, max (0.79)", 0.79, k5["leak_share"].max())
+rf = nd[(nd["model"] == "rf_full") & nd["dataset"].isin(["australian", "german", "taiwan"])]
+add2("rf_full leakage share, min (0.34)", 0.34, rf["leak_share"].min())
+add2("rf_full leakage share, max (0.59)", 0.59, rf["leak_share"].max())
+bm = nd[nd["model"].isin(["hgb_depth2", "hgb_depth4", "hgb_full"]) & nd["dataset"].isin(["german", "taiwan", "lendingclub"])]
+add2("boosting leakage share, min (0.01)", 0.01, bm["leak_share"].min())
+add2("boosting leakage share, max (0.20)", 0.20, bm["leak_share"].max())
+add2("boosting scoring share, min (0.90)", 0.90, bm["score_share"].min())
+add2("boosting scoring share, max (1.00)", 1.00, bm["score_share"].max())
+add2("knn5 interaction / joint, min (-0.52)", -0.52, k5["interaction_share"].min())
+add2("knn5 interaction / joint, max (-0.10)", -0.10, k5["interaction_share"].max())
+b2 = bm[bm["dataset"].isin(["german", "taiwan"])]["interaction_share"]
+add2("boosting interaction / joint, German and Taiwan, min (-0.11)", -0.11, b2.min())
+add2("boosting interaction / joint, German and Taiwan, max (-0.06)", -0.06, b2.max())
+b3 = bm[bm["dataset"] == "lendingclub"]["interaction_share"]
+add2("boosting interaction / joint, Lending Club, min (-0.02)", -0.02, b3.min())
+add2("boosting interaction / joint, Lending Club, max (-0.01)", -0.01, b3.max())
+add2("max |joint - first-design total| (0.0018)", 0.0018, nd["joint_minus_diag_total"].abs().max(), 0.00006)
+for d, c in [("australian", 0.30), ("german", 0.18), ("taiwan", 0.06), ("lendingclub", -0.31)]:
+    add2("per-seed Kendall tau, " + d, c, rk.loc[d, "tau_mean"])
+tcm = pd.read_csv(T / "tong_hop_chinh.csv")
+tx = tcm[tcm["dataset"] == "taiwan"].set_index("model")
+add2("AUC lost by choosing the leaky winner, Taiwan (0.017)", 0.017,
+     tx["holdout_smote"].max() - tx.loc["rf_full", "holdout_smote"], 0.0006)
+tt2 = pd.read_csv(T / "bang_thoi_gian.csv").set_index("model")
+add2("AUC lost by choosing the leaky winner, Lending Club (0.035)", 0.035,
+     tt2["holdout_oot"].max() - tt2.loc["rf_full", "holdout_oot"], 0.0006)
+print(pd.DataFrame(cl2).to_string(index=False))

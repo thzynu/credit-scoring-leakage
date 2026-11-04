@@ -56,3 +56,27 @@ max |preprocessing change|, quantile scaling (4.2.1: below 0.002)       0.002   
                                k 5 -> 25 leakage reduction german       0.650      0.6506     ok
                                k 5 -> 25 leakage reduction taiwan       0.640      0.6429     ok
                           k 5 -> 25 leakage reduction lendingclub       0.600      0.6014     ok
+
+(7) manuscript claims of the revised version vs the new tables
+                                                       claim  manuscript  recomputed status
+                     knn5 leakage share of joint, min (0.53)      0.5300      0.5296     ok
+                     knn5 leakage share of joint, max (0.79)      0.7900      0.7858     ok
+                           rf_full leakage share, min (0.34)      0.3400      0.3408     ok
+                           rf_full leakage share, max (0.59)      0.5900      0.5927     ok
+                          boosting leakage share, min (0.01)      0.0100      0.0125     ok
+                          boosting leakage share, max (0.20)      0.2000      0.2028     ok
+                          boosting scoring share, min (0.90)      0.9000      0.9030     ok
+                          boosting scoring share, max (1.00)      1.0000      0.9997     ok
+                       knn5 interaction / joint, min (-0.52)     -0.5200     -0.5186     ok
+                       knn5 interaction / joint, max (-0.10)     -0.1000     -0.0959     ok
+boosting interaction / joint, German and Taiwan, min (-0.11)     -0.1100     -0.1057     ok
+boosting interaction / joint, German and Taiwan, max (-0.06)     -0.0600     -0.0555     ok
+     boosting interaction / joint, Lending Club, min (-0.02)     -0.0200     -0.0232     ok
+     boosting interaction / joint, Lending Club, max (-0.01)     -0.0100     -0.0122     ok
+                   max |joint - first-design total| (0.0018)      0.0018      0.0018     ok
+                            per-seed Kendall tau, australian      0.3000      0.2957     ok
+                                per-seed Kendall tau, german      0.1800      0.1825     ok
+                                per-seed Kendall tau, taiwan      0.0600      0.0571     ok
+                           per-seed Kendall tau, lendingclub     -0.3100     -0.3143     ok
+       AUC lost by choosing the leaky winner, Taiwan (0.017)      0.0170      0.0174     ok
+ AUC lost by choosing the leaky winner, Lending Club (0.035)      0.0350      0.0353     ok
