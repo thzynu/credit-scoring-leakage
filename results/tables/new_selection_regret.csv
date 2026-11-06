@@ -1,0 +1,5 @@
+dataset,n_seed,excess_regret,excess_se,share_seeds_excess_gt0,share_same_choice,oracle_regret_leaky,oracle_regret_clean,leaky_choice_modal,clean_choice_modal,oracle_choice_modal
+australian,30,0.0013,0.0014,0.4333,0.3333,0.0115,0.0102,rf_full,rf_depth5,hgb_depth2
+german,30,-0.0076,0.0027,0.1667,0.3,0.0118,0.0194,rf_full,rf_full,logreg
+lendingclub,5,0.0353,0.0006,1.0,0.0,0.0353,0.0,rf_full,logreg,logreg
+taiwan,10,0.0174,0.0012,1.0,0.0,0.0178,0.0004,rf_full,rf_depth5,rf_depth5

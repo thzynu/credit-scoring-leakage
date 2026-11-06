@@ -1,0 +1,11 @@
+variable,mean_2013_15,mean_2016,std_diff,note
+revenue,75123.1473,79368.2348,0.0662,standardised mean difference
+dti_n,18.3487,18.7879,0.0529,standardised mean difference
+loan_amnt,14620.1175,14402.9007,-0.0258,standardised mean difference
+fico_n,695.6081,697.3972,0.0594,standardised mean difference
+experience_c,1.0,1.0,,standardised mean difference
+emp_length,,,0.0346,categorical: total-variation distance of the category shares
+purpose,,,0.0601,categorical: total-variation distance of the category shares
+home_ownership_n,,,0.0196,categorical: total-variation distance of the category shares
+addr_state,,,0.031,categorical: total-variation distance of the category shares
+"ADVERSARIAL AUC (train years vs 2016, predictors only)",,,0.5832,0.5 = no covariate shift; values well above 0.5 = the test year is distinguishable

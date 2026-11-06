@@ -1,0 +1,13 @@
+year,n_loans,default_rate,share_of_sample,role,maturity_flag
+2007,44,0.3182,0.0004,not used,
+2008,178,0.2191,0.0018,not used,
+2009,392,0.1607,0.0039,not used,
+2010,930,0.1247,0.0093,not used,
+2011,1612,0.1371,0.0161,not used,
+2012,3960,0.1566,0.0396,not used,
+2013,10003,0.1574,0.1,training years,
+2014,16555,0.1825,0.1655,training years,
+2015,27866,0.2085,0.2787,training years,
+2016,21745,0.233,0.2174,out-of-time test,CHECK: loans issued late may be missing if still running when the file was built
+2017,12549,0.2239,0.1255,not used,CHECK: loans issued late may be missing if still running when the file was built
+2018,4167,0.1701,0.0417,not used,CHECK: loans issued late may be missing if still running when the file was built

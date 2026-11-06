@@ -1,0 +1,5 @@
+dataset,n_models,n_runs,ordering_by_mean,share_identical_order,share_same_top,mean_tau_vs_mean_order
+australian,6,50,knn5 > rf_full > hgb_full > rf_depth5 > logreg > hgb_depth2,0.04,0.64,0.4827
+german,6,50,knn5 > rf_full > hgb_full > rf_depth5 > logreg > hgb_depth2,0.42,1.0,0.893
+lendingclub,5,20,knn5 > hgb_full > rf_depth5 > logreg > hgb_depth2,0.55,1.0,0.91
+taiwan,6,30,knn5 > rf_full > hgb_full > hgb_depth2 > rf_depth5 > logreg,0.8,1.0,0.9733
