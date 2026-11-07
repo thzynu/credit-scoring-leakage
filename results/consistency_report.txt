@@ -28,43 +28,10 @@ lendingclub: rows=30  max|diff|=0.00e+00
 (4) duplicate keys / missing values in result files
 
 (5) cells with fewer seeds than planned (german 30, australian 30, taiwan 10, lendingclub 5)
-                file              model  n_seed  planned
- gap_lendingclub.csv         hgb_depth2       3        5
- gap_lendingclub.csv         hgb_depth4       3        5
- gap_lendingclub.csv           hgb_full       3        5
- gap_lendingclub.csv              knn25       3        5
- gap_lendingclub.csv               knn5       3        5
- gap_lendingclub.csv             logreg       3        5
- gap_lendingclub.csv          rf_depth5       3        5
-      gap_taiwan.csv         hgb_depth1       5       10
-      gap_taiwan.csv         hgb_depth2       5       10
-      gap_taiwan.csv    hgb_depth2_noes       5       10
-      gap_taiwan.csv         hgb_depth3       5       10
-      gap_taiwan.csv         hgb_depth4       5       10
-      gap_taiwan.csv hgb_depth4_iter300       5       10
-      gap_taiwan.csv    hgb_depth4_noes       5       10
-      gap_taiwan.csv         hgb_depth6       5       10
-      gap_taiwan.csv           hgb_full       5       10
-      gap_taiwan.csv      hgb_full_noes       5       10
-      gap_taiwan.csv               knn1       5       10
-      gap_taiwan.csv             knn100       5       10
-      gap_taiwan.csv              knn15       5       10
-      gap_taiwan.csv              knn25       5       10
-      gap_taiwan.csv               knn3       5       10
-      gap_taiwan.csv               knn5       5       10
-      gap_taiwan.csv              knn50       5       10
-      gap_taiwan.csv             logreg       5       10
-      gap_taiwan.csv         rf_depth10       5       10
-      gap_taiwan.csv          rf_depth3       5       10
-      gap_taiwan.csv          rf_depth5       5       10
-      gap_taiwan.csv            rf_full       5       10
-      gap_taiwan.csv          rf_leaf10       5       10
-      gap_taiwan.csv           rf_leaf2       5       10
-      gap_taiwan.csv          rf_leaf20       5       10
-      gap_taiwan.csv           rf_leaf5       5       10
-lendingclub_cost.csv           hgb_full       3        5
-lendingclub_cost.csv             logreg       3        5
-lendingclub_cost.csv          rf_depth5       3        5
+                file     model  n_seed  planned
+lendingclub_cost.csv  hgb_full       3        5
+lendingclub_cost.csv    logreg       3        5
+lendingclub_cost.csv rf_depth5       3        5
 
 (6) manuscript claims vs recomputed values
                                                             claim  manuscript  recomputed status

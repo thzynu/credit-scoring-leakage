@@ -65,7 +65,7 @@ for f in sorted(R.glob("*.csv")):
 print("\n(5) cells with fewer seeds than planned (german 30, australian 30, taiwan 10, lendingclub 5)")
 rows = []
 for f in sorted(R.glob("*.csv")):
-    d = next((k for k in EXPECT if k in f.name), None)
+    d = None if f.name.startswith(("gap_", "alloc_")) else next((k for k in EXPECT if k in f.name), None)
     x = pd.read_csv(f)
     if d is None or "model" not in x or "seed" not in x:
         continue
