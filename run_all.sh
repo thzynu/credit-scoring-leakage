@@ -76,3 +76,19 @@ python tools/summarize_provenance.py
 python tools/summarize_new.py
 python tools/rank_stats.py
 python tools/check_consistency.py
+
+# --- Allocation stability, generalisation gap, selection regret, Lending Club audit
+python code/exp_alloc.py --data german --models logreg knn5 rf_depth5 rf_full hgb_depth2 hgb_full --split-seeds 1 2 3 4 5 --nalloc 10
+python code/exp_alloc.py --data australian --models logreg knn5 rf_depth5 rf_full hgb_depth2 hgb_full --split-seeds 1 2 3 4 5 --nalloc 10
+python code/exp_alloc.py --data taiwan --models logreg knn5 rf_depth5 rf_full hgb_depth2 hgb_full --split-seeds 1 2 3 --nalloc 10
+python code/exp_alloc.py --data lendingclub --models logreg knn5 rf_depth5 hgb_depth2 hgb_full --split-seeds 1 2 --nalloc 10
+python code/exp_gap.py --data german --nseeds 30
+python code/exp_gap.py --data australian --nseeds 30
+python code/exp_gap.py --data taiwan --nseeds 5
+python code/exp_gap.py --data lendingclub --models logreg knn5 knn25 rf_depth5 hgb_depth2 hgb_depth4 hgb_full --nseeds 3
+python tools/summarize_alloc.py
+python tools/check_alloc0.py
+python tools/summarize_gap.py
+python tools/added_value.py
+python tools/selection_regret.py
+python tools/audit_lendingclub.py
