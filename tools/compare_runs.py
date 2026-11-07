@@ -1,7 +1,7 @@
-﻿import sys, glob, os
+import sys, glob, os
 import pandas as pd
 a, b = sys.argv[1], sys.argv[2]
-KEYS = ["dataset", "balancer", "model", "seed", "frac", "kfrac", "variant", "split"]
+KEYS = ["dataset", "balancer", "model", "seed", "frac", "kfrac", "variant", "split", "split_seed", "alloc_seed"]
 for fa in sorted(glob.glob(os.path.join(a, "*.csv"))):
     name = os.path.basename(fa)
     fb = os.path.join(b, name)
